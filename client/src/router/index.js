@@ -3,7 +3,9 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 // Views
 import HomeView from '@/views/HomeView.vue'
-import LoginView from "@/views/LoginView.vue";
+import LoginView from "@/views/LoginView.vue"
+import BookView from "@/views/BookView.vue";
+
 
 const routes = [
   {
@@ -21,6 +23,14 @@ const routes = [
       title: "Login"
     },
     component: LoginView,
+  },
+  {
+    path: "/book",
+    name: "book",
+    meta: {
+      title: "Book"
+    },
+    component: BookView,
   },
 ];
 
