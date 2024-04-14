@@ -84,7 +84,7 @@ export default {
       }
   },
   methods: {
-      ...mapActions(['setUser']),
+      // ...mapActions(['setUser']),
       async login () {
         console.log('login')
       },
@@ -93,7 +93,7 @@ export default {
       }
   },
   computed: {
-      ...mapGetters(['loggedInUser'])
+      // ...mapGetters(['loggedInUser'])
   },
   mounted() {
   }

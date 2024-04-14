@@ -5,6 +5,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from '@/views/HomeView.vue'
 import LoginView from "@/views/LoginView.vue"
 import BookView from "@/views/BookView.vue";
+import ProfileView from "@/views/ProfileView.vue";
 
 
 const routes = [
@@ -32,6 +33,14 @@ const routes = [
     },
     component: BookView,
   },
+  {
+    path: "/profile",
+    name: "profile",
+    meta: {
+      title: "Profile"
+    },
+    component: ProfileView,
+  }
 ];
 
 const router = createRouter({

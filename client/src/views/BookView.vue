@@ -1,14 +1,14 @@
 <template>
   <div class="book-view">
     <header>
-      <!-- Cabeçalho do site -->
+      <MainHeader />
     </header>
      
 
       <div class="book">
 
         
-        <i class="fa-solid fa-arrow-left"></i>
+        <i class="fa-solid fa-arrow-left" @click="this.$router.push('/')">  </i>
 
         <div class ="book-info">
             <h1><strong>{{ book.title }}</strong> </h1>
@@ -44,13 +44,14 @@
 
         <div class="book-image">
 
-            <img :src="book.imageUrl" alt="Imagem do livro" />
+            <!-- <img :src="book.imageUrl" alt="Imagem do livro" /> -->
+            <img :src="livroExemplo" alt="Imagem do livro" /> 
 
             <div class="livro-anunciante">
                 <p class="livro">Livro anunciado por</p>
 
                 <div class="anunciante">
-                    <img class="dono" />
+                    <img class="dono" :src="userImage" alt="Imagem do anunciante" />
                     <p class="anunciante-nome">{{ donodolivro.nome }}</p>
                 </div>
                 
@@ -66,13 +67,15 @@
 
 <script>
 // import { mapActions, mapGetters } from 'vuex'
-// import logo from '@/assets/images/logo.png'
-// import imgLogin from '@/assets/images/login_book.png'
-// import icon from '@/assets/images/icon.png'
+import livroExemplo from '@/assets/images/livro-exemplo.png';
+import MainHeader from '@/components/headers/MainHeader.vue';
+import userImage from '@/assets/images/user.svg';
 
 export default {
   name: 'BookView',
-
+  components: {
+    MainHeader
+  },
   data() {
     return {
       book: {
@@ -88,7 +91,9 @@ export default {
       donodolivro: {
         nome: "Balchandra"
 
-      }
+      },
+      livroExemplo,
+      userImage
     };
   },
   
@@ -102,7 +107,9 @@ export default {
   align-items: flex-end;
   padding: 20px;
 
-
+  header {
+			margin-bottom: 90px;
+  }
 
   .book {
       display: flex;
@@ -111,12 +118,12 @@ export default {
       width: 100%;
       justify-content: center;
     //   border: 3px solid #000000;
-      
+  
 
       i {
             color: var(--primaryColor);
             font-size: 40px;
-            margin-top: 62px; 
+            margin-top: 32px; 
             margin-left: 15px;
             margin-right: 25px;
             align-self: flex-start;
@@ -126,14 +133,11 @@ export default {
             display: flex;
             flex-direction: column;
             width: 100%;
-            margin-right: 25px;
-            // border: 3px solid #000000;
-            padding: 30px;
+            padding: 20px;
             
             
 
             h1 {
-              margin-top: 27px;
               font-size: 40px;
               font-weight: 400;
               color: #000000; 
@@ -176,11 +180,8 @@ export default {
                 }
 
             }
-
-      
         }
 
-        
         .book-image{
 
             display: flex;
@@ -188,7 +189,7 @@ export default {
             align-items: center;
             
             width: 1300px;
-            height: 800px;
+            height: 750px;
             justify-content: center;
             
             border-radius: 50px;
@@ -218,11 +219,6 @@ export default {
                     font-size:20px;
 
                 }
-
-
-
-        
-
                 .anunciante{
 
                     display: flex;
@@ -247,19 +243,8 @@ export default {
                 }
 
             }
-
-            
-
-
         }
-      
-
-       
-       
-
-        }
-
-
+    }
 }    
 
 </style>
