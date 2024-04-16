@@ -27,13 +27,37 @@
       <div class="submit-button">
             <button @click="submitForm">Salvar</button>
         </div>
+
+        <ModalComponent :modalOpen="passwordModalOpen" @closeModal="passwordModalOpen = false">
+            <div class="update-password-modal">
+                <h2>Alterar senha</h2>
+                <div class="change-password-container">
+                    <div class="password-fields">
+                        <label for="password">Senha Atual</label>
+                        <input  id="password" type="password" placeholder="Nova senha" v-model="passwordData.password">
+                        
+                        <label for="newPassword">Nova Senha</label>
+                        <input  id="newPassword" type="password" placeholder="Nova senha" v-model="passwordData.newPassword">
+
+                        <label for="confirmPassword">Confirmar Senha</label>
+                        <input  id="confirmPassword" type="password" placeholder="Confirmar senha" v-model="passwordData.confirmPassword">
+                    </div>
+                </div>
+                <div class="submit-button-pss">
+                    <button @click="updatePassword()">Alterar</button>
+                </div>
+            </div>
+        </ModalComponent>
   </div>
 </template>
 
 <script>
+import ModalComponent from '@/components/modals/ModalComponent.vue';
+
 export default {
   name: 'UserRegistration',
   components: {
+    ModalComponent
   },
   data() {
     return {
@@ -75,10 +99,65 @@ export default {
                 disable: true
             }
           ]
-        }
+        },
+        passwordData: {
+            password: '',
+            newPassword: '',
+            confirmPassword: ''
+        },
+        passwordModalOpen: false
     }
   },
   methods: {
+    async updatePassword() {
+        if (!this.passwordData.password || !this.passwordData.newPassword || !this.passwordData.confirmPassword) {
+            this.$toast.open({
+                message: 'Preencha todos os campos obrigatórios',
+                type: 'warning',
+                duration: 5000,
+                position: 'top-right'
+            });
+            return;
+        }
+
+        if (this.passwordData.newPassword.length < 6) {
+            this.$toast.open({
+                message: 'A senha deve ter no mínimo 6 caracteres',
+                type: 'warning',
+                duration: 5000,
+                position: 'top-right'
+            });
+            return;
+        }
+
+        if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
+            this.$toast.open({
+                message: 'As senhas não coincidem',
+                type: 'warning',
+                duration: 5000,
+                position: 'top-right'
+            });
+            return;
+        }
+
+        // await updatePassword(this.passwordData.password, this.passwordData.newPassword).then(() => {
+        //     this.$toast.open({
+        //         message: 'Senha alterada com sucesso',
+        //         type: 'success',
+        //         duration: 5000,
+        //         position: 'top-right'
+        //     });
+        //     this.passwordModalOpen = false;
+        // }).catch(err => {
+        //     console.log(err);
+        //     this.$toast.open({
+        //         message: 'Senha incorreta.',
+        //         type: 'error',
+        //         duration: 5000,
+        //         position: 'top-right'
+        //     });
+        // });
+    }
   },
   computed: {
   },
@@ -180,6 +259,54 @@ export default {
             font-weight: 500;
             cursor: pointer;
             margin: 20px 0px;
+        }
+    }
+
+    .update-password-modal {
+        .password-fields {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            label {
+                margin-bottom: 5px;
+                font-weight: 500;
+                text-align: left;
+                &:after {
+                    content: '*';
+                    color: var(--primaryColor);
+                    margin-left: 5px;
+                }
+            }
+    
+            input {
+                padding: 10px 15px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 16px;
+                margin: 10px 0px 10px 0px;
+                width: 300px;
+    
+                &:focus {
+                    outline: none;
+                    border-color: var(--primaryColor);
+                }
+            }
+        }
+
+        .submit-button-pss {
+            button {
+                width: 200px;
+                height: 50px;
+                border-radius: 5px;
+                border: none;
+                background-color: var(--primaryColor);
+                color: #FFFFFF;
+                font-size: 20px;
+                font-weight: 500;
+                cursor: pointer;
+                margin: 20px 0px;
+            }
         }
     }
 }

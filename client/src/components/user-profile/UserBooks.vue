@@ -80,7 +80,8 @@ export default {
           price: 150,
           image: 'https://m.media-amazon.com/images/I/61oaBUaZwiL._AC_UF1000,1000_QL80_.jpg'
         }
-      ]
+      ],
+      booksCopy: []
     }
   },
   methods: {
@@ -89,6 +90,10 @@ export default {
     },
     fixLength: function (text) {
         return text.length > 25 ? text.substr(0, 25) + '...' : text
+    },
+    searchProduct() {
+        // verificar logica para nao resetar a lista de livros em cada busca
+        // this.books = this.books.filter(book => book.title.toLowerCase().includes(this.searchText.toLowerCase()))
     }
   },
   computed: {

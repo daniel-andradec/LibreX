@@ -75,9 +75,11 @@ export default {
       navigateToProfile() {
           // console.log(this.loggedInUser)
           // if (this.loggedInUser?.role === 'customer')
-          //     this.$router.push('/customer-profile')
-          // else if (this.loggedInUser?.role === 'vendor')
-          //     this.$router.push('/store-registration')
+              this.$router.push('/profile')
+      },
+      async logout () {
+        // todo: implement logout
+        this.$router.push('/login')
       }
   },
   computed: {

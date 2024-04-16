@@ -6,7 +6,7 @@
     
     <div class="user-info">
       <img class="user-image" :src="userImage" alt="User image" />
-      
+      <h1>Enzo Pinheiro</h1>
     </div>
 
     <div class="profile-options">

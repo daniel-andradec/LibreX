@@ -4,9 +4,8 @@
       <MainHeader />
     </header>
 
-    <div class="d-flex justify-space-between 1">
+    <div class="">
       Hello from HomeView
-      <v-icon icon="mdi-account" />
       <i class="fa fa-user"></i>
       <div>
         Go to <router-link to="/login">Login</router-link>
