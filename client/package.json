@@ -12,6 +12,7 @@
     "roboto-fontface": "*",
     "vue": "^3.4.0",
     "vue-router": "^4.3.0",
+    "vue-toast-notification": "^3.1.2",
     "vuetify": "^3.5.0",
     "vuex": "^4.0.2"
   },

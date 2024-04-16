@@ -10,22 +10,42 @@
     </div>
 
     <div class="profile-options">
-      <h1 :class="{ 'is-bold': selectedOption === 'books' }" @click="selectOption('books')">Meus livros</h1>
-      <h1 :class="{ 'is-bold': selectedOption === 'orders' }" @click="selectOption('orders')">Meus pedidos</h1>
-      <h1 :class="{ 'is-bold': selectedOption === 'settings' }" @click="selectOption('settings')">Configurações</h1>
+      <div class="options">
+        <h1 :class="{ 'is-bold': selectedOption === 'books' }" @click="selectOption('books')">Meus livros</h1>
+        <h1 :class="{ 'is-bold': selectedOption === 'history' }" @click="selectOption('history')">Histórico</h1>
+        <h1 :class="{ 'is-bold': selectedOption === 'registration' }" @click="selectOption('registration')">Cadastro</h1>
+      </div>
+      
+      <div class="separator"></div>
     </div>
 
-    <div class="separator"></div>
+    <div v-if="selectedOption === 'books'">
+      <UserBooks />
+    </div>
+
+    <div v-if="selectedOption === 'history'">
+      <UserHistory />
+    </div>
+
+    <div v-if="selectedOption === 'registration'">
+      <UserRegistration />
+    </div>
   </div>
 </template>
 
 <script>
 import icon from '@/assets/images/icon.png'
 import userImage from '@/assets/images/user.svg'
+import UserBooks from '@/components/user-profile/UserBooks.vue'
+import UserHistory from '@/components/user-profile/UserHistory.vue'
+import UserRegistration from '@/components/user-profile/UserRegistration.vue'
 
 export default {
   name: 'ProfileView',
   components: {
+    UserBooks,
+    UserHistory,
+    UserRegistration
   },
   data() {
     return {
@@ -51,7 +71,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f5f5f5;
   
   header {
     display: flex;
@@ -87,23 +106,25 @@ export default {
   }
 
   .profile-options {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 20px 0 10px 40px;
-    gap: 30px;
-
-    h1 {
-      font-size: 20px;
-      font-weight: 300;
-      color: #333;
-      margin-bottom: 10px;
-      cursor: pointer;  
-    }
-
-    .is-bold {
-      font-weight: 500;
+    .options {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 20px 0 10px 40px;
+      gap: 30px;
+  
+      h1 {
+        font-size: 20px;
+        font-weight: 300;
+        color: #333;
+        margin-bottom: 10px;
+        cursor: pointer;  
+      }
+  
+      .is-bold {
+        font-weight: 500;
+      }
     }
   }
 
