@@ -29,13 +29,13 @@ User.init({
     },
     foto: {
         type: DataTypes.STRING,
-        allowNull: true  // Permitir nulo se a foto não for obrigatória
+        allowNull: true 
     }
 }, {
     sequelize,
     modelName: 'User',
     tableName: 'users',
-    timestamps: true // Adiciona automaticamente os campos createdAt e updatedAt
+    timestamps: true 
 });
 
 module.exports = User;
