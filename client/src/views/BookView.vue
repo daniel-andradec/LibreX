@@ -122,7 +122,7 @@ export default {
 
       i {
             color: var(--primaryColor);
-            font-size: 40px;
+            font-size: 35px;
             margin-top: 32px; 
             margin-left: 15px;
             margin-right: 25px;
@@ -138,6 +138,7 @@ export default {
             
 
             h1 {
+              font-family: "Arial";
               font-size: 40px;
               font-weight: 400;
               color: #000000; 
@@ -146,7 +147,7 @@ export default {
             }
      
             h2 {
-                    font-size: 32px;
+                    font-size: 30px;
                     font-weight: 400;
                     margin-bottom: 80px;
                     color: var(--primaryColor);
@@ -160,8 +161,7 @@ export default {
                 width: 100%;
                 justify-content: left;
                 gap: 150px;
-                font-size: 22px;
-                margin-bottom: 50px;
+                margin-bottom: 70px;
 
                 .detail{
                     display: flex;
@@ -171,12 +171,17 @@ export default {
                 .label{
                     color : var(--primaryColor);
                     text-align: left;
+                    font-size: 23px;
+                    margin-bottom: 12px;
+                    
 
                 }
 
                 p{
                     color: #000000;
                     text-align: left;
+                    font-size: 20px;
+                    font-weight: medium;
                 }
 
             }
