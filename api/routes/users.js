@@ -1,14 +1,30 @@
 const express = require('express');
 const User = require('../models/User'); 
 const router = express.Router();
+const {loginMiddleware, notLoggedIn} = require('../utils/auth');
+const encryptPassword = require('../utils/encryptPassword');
 
 // POST /users - Criar um novo usuário
 router.post('/', async (req, res) => {
     try {
+        req.body.senha = await encryptPassword(req.body.senha);
         const user = await User.create(req.body);
         res.status(201).send(user);
     } catch (error) {
         res.status(400).send(error);
+    }
+});
+
+// Fazer login usando o jwt
+
+router.post('/login', notLoggedIn, loginMiddleware);
+
+router.post('/logout', async (req, res, next) => {
+    try{
+        res.clearCookie('jwt');
+        res.status(200).send('Deslogado com sucesso');
+    }catch(error){
+        next(error);
     }
 });
 
