@@ -6,6 +6,7 @@ import HomeView from '@/views/HomeView.vue'
 import LoginView from "@/views/LoginView.vue"
 import BookView from "@/views/BookView.vue";
 import ProfileView from "@/views/ProfileView.vue";
+import ListView from "@/views/ListView.vue";
 
 
 const routes = [
@@ -40,6 +41,14 @@ const routes = [
       title: "Profile"
     },
     component: ProfileView,
+  },
+  {
+    path: "/list",
+    name: "list",
+    meta: {
+      title: "List"
+    },
+    component: ListView,
   }
 ];
 

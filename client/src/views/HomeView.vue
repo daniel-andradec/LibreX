@@ -13,6 +13,7 @@
       <div>
         Go to <router-link to="/book">Book</router-link>
       </div>
+        Go to <router-link to="/list">List</router-link>
       <div>
         Other way to go to Login: <button @click="$router.push('/login')">Login</button>
       </div>

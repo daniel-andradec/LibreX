@@ -11,7 +11,7 @@
         <i class="fa-solid fa-arrow-left" @click="this.$router.push('/')">  </i>
 
         <div class ="book-info">
-            <h1><strong>{{ book.title }}</strong> </h1>
+            <h1>{{ book.title }}</h1>
         
             <h2>{{ book.authors.join(', ') }}</h2>
 
@@ -117,7 +117,8 @@ export default {
       align-items: stretch;
       width: 100%;
       justify-content: center;
-    //   border: 3px solid #000000;
+      
+
   
 
       i {
@@ -135,7 +136,7 @@ export default {
             width: 100%;
             padding: 20px;
             
-            
+           
 
             h1 {
               font-family: "Arial";
@@ -143,13 +144,13 @@ export default {
               font-weight: 400;
               color: #000000; 
               text-align: left; 
-              margin-bottom: 25px;
+              margin-bottom: 17px;
             }
      
             h2 {
                     font-size: 30px;
                     font-weight: 400;
-                    margin-bottom: 80px;
+                    margin-bottom: 90px;
                     color: var(--primaryColor);
                     text-align: left;
             }
@@ -171,7 +172,7 @@ export default {
                 .label{
                     color : var(--primaryColor);
                     text-align: left;
-                    font-size: 23px;
+                    font-size: 24px;
                     margin-bottom: 12px;
                     
 
@@ -180,7 +181,7 @@ export default {
                 p{
                     color: #000000;
                     text-align: left;
-                    font-size: 20px;
+                    font-size: 22px;
                     font-weight: medium;
                 }
 
