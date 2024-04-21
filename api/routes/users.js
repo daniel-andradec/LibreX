@@ -5,8 +5,9 @@ const upload = require('../config/multerConfig');
 const path = require('path')
 const {loginMiddleware, notLoggedIn} = require('../utils/auth');
 const encryptPassword = require('../utils/encryptPassword');
+const PermissionError = require('../utils/errors/PermissionError.js');
+const bcrypt = require('bcrypt');
 
-// POST /users - Criar um novo usuário
 router.post('/', upload.single('foto'), async (req, res) => {
     try {
         req.body.senha = await encryptPassword(req.body.senha);
@@ -24,7 +25,6 @@ router.post('/', upload.single('foto'), async (req, res) => {
     }
 });
 
-// Fazer login usando o jwt
 
 router.post('/login', notLoggedIn, loginMiddleware);
 
@@ -37,7 +37,27 @@ router.post('/logout', async (req, res, next) => {
     }
 });
 
-// GET /users - Ler todos os usuários
+router.put('/updateSenha', async (req, res, next) => {
+    try {
+        console.log(req.body);
+        const user = await User.findByPk(req.body.id);
+        console.log(user);
+        if (user) {
+            const matchingPassword = await bcrypt.compare(req.body.atual, user.senha);
+            if (!matchingPassword) {
+                throw new PermissionError('E-mail e/ou senha incorretos!');
+            }
+            user.senha = await encryptPassword(req.body.nova);
+            await user.save();
+            res.status(200).send('Senha atualizada com sucesso!');
+        } else {
+            res.status(404).send({ error: 'User not found' });
+        }
+    } catch (error) {
+        res.status(400).send(error);
+    }
+} );
+
 router.get('/', async (req, res) => {
     try {
         const users = await User.findAll();
@@ -48,7 +68,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /users/:id - Ler um usuário específico pelo ID
 router.get('/:id', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
@@ -62,7 +81,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// GET /users/:id/photo - Obter a foto de um usuário específico
 router.get('/:id/photo', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
@@ -81,12 +99,13 @@ router.get('/:id/photo', async (req, res) => {
     }
 });
 
-module.exports = router;
-// PUT /users/:id - Atualizar um usuário pelo ID
 router.put('/:id', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
         if (user) {
+            if (req.body.senha) {
+                delete req.body.senha;
+            }
             await user.update(req.body);
             res.send(user);
         } else {
@@ -97,7 +116,6 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE /users/:id - Deletar um usuário pelo ID
 router.delete('/:id', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
