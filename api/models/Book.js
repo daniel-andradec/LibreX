@@ -34,6 +34,11 @@ Book.init({
             isIn: [[1, 2, 3]]
         }
     },
+    available: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+    },
     idVendedor: {
         type: DataTypes.INTEGER,
         allowNull: false,

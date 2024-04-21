@@ -33,16 +33,12 @@ Sale.init({
             model: 'books', 
             key: 'id'
         }
-    },
-    data: {
-        type: DataTypes.DATE,
-        allowNull: false
     }
 }, {
     sequelize,
     modelName: 'Sale',
     tableName: 'sales',
-    timestamps: false 
+    timestamps: true
 });
 
 module.exports = Sale;

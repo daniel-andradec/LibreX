@@ -1,11 +1,12 @@
 const express = require('express');
 const Sale = require('../models/Sale');
 const router = express.Router();
+const SaleService = require('../services/salesService');
 
 // POST /sales - Criar uma nova venda
 router.post('/', async (req, res) => {
     try {
-        const sale = await Sale.create(req.body);
+        const sale = await SaleService.purchase(req.body);
         res.status(201).send(sale);
     } catch (error) {
         res.status(400).send(error);
