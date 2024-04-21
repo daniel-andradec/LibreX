@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
+const User = require('./User');
 
 class Book extends Model {}
 
@@ -32,6 +33,20 @@ Book.init({
         validate: {
             isIn: [[1, 2, 3]]
         }
+    },
+    available: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+    },
+    idVendedor: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'users', 
+            key: 'id'
+        },
+        onDelete: 'CASCADE'
     }
 }, {
     sequelize,

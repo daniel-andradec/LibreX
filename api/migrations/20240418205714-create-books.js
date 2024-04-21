@@ -1,5 +1,7 @@
 'use strict';
 
+const User = require("../models/User");
+
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.createTable('books', {
@@ -39,6 +41,19 @@ module.exports = {
             updatedAt: {
                 type: Sequelize.DATE,
                 allowNull: false
+            },
+            available: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: true
+            },
+            idVendedor: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'users', 
+                    key: 'id'
+                }
             }
         });
     },
