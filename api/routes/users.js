@@ -116,6 +116,23 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// PUT /users/:id/photo - Atualizar a foto de um usuário específico
+router.put('/:id/photo', upload.single('foto'), async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (user) {
+            const fotoPath = req.file ? req.file.path : null;
+            await user.update({ foto: fotoPath });
+            res.send({ message: 'Photo updated successfully', user });
+        } else {
+            res.status(404).send({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: 'Server error while updating photo.' });
+    }
+});
+
 router.delete('/:id', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);

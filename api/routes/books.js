@@ -81,6 +81,22 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+router.put('/:id/photo', upload.single('foto'), async (req, res) => {
+    try {
+        const book = await Book.findByPk(req.params.id);
+        if (book) {
+            const fotoPath = req.file ? req.file.path : null;
+            await book.update({ foto: fotoPath });
+            res.send({ message: 'Photo updated successfully', book });
+        } else {
+            res.status(404).send({ message: 'Book not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: 'Server error while updating photo.' });
+    }
+});
+
 // DELETE /books/:id - Deletar um livro
 router.delete('/:id', async (req, res) => {
     try {
