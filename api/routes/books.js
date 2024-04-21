@@ -24,7 +24,9 @@ router.post('/', upload.single('foto'), async (req, res) => {
 // GET /books - Listar todos os livros
 router.get('/', async (req, res) => {
     try {
-        const books = await Book.findAll();
+        const books = await Book.findAll({
+            where: { available: true }
+        });
         res.send(books);
     } catch (error) {
         res.status(500).send(error);

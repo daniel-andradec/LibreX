@@ -45,7 +45,7 @@ router.put('/updateSenha', async (req, res, next) => {
         if (user) {
             const matchingPassword = await bcrypt.compare(req.body.atual, user.senha);
             if (!matchingPassword) {
-                throw new PermissionError('E-mail e/ou senha incorretos!');
+                throw new PermissionError('Senha atual incorreta!');
             }
             user.senha = await encryptPassword(req.body.nova);
             await user.save();
