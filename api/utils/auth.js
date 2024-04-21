@@ -70,7 +70,8 @@ async function loginMiddleware(req, res, next) {
 
     jwtSign(user, res);
 
-    res.status(200).send('Login efetuado com sucesso!');
+    user.senha = undefined;
+    res.status(200).send(user);
   } catch (error) {
     next(error);
   }
