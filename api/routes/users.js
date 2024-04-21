@@ -1,5 +1,7 @@
 const express = require('express');
 const User = require('../models/User'); 
+const Book = require('../models/Book'); 
+const Sale = require('../models/Sale');
 const router = express.Router();
 const upload = require('../config/multerConfig');
 const path = require('path')
@@ -81,6 +83,47 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// GET /users/:id/sales - Pegar todas as vendas de um usuário
+router.get('/:id/sales', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const sales = await Sale.findAll({
+            where: {
+                idVendedor: userId
+            }
+        });
+
+        if (sales.length === 0) {
+            return res.status(404).send({ message: 'No sales found for this user' });
+        }
+
+        res.send(sales);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: 'Server error while retrieving sales' });
+    }
+});
+
+router.get('/:id/purchases', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const purchases = await Sale.findAll({
+            where: {
+                idComprador: userId
+            }
+        });
+
+        if (purchases.length === 0) {
+            return res.status(404).send({ message: 'No purchases found for this user' });
+        }
+
+        res.send(purchases);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: 'Server error while retrieving purchases' });
+    }
+});
+
 router.get('/:id/photo', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
@@ -96,6 +139,32 @@ router.get('/:id/photo', async (req, res) => {
     } catch (error) {
         res.status(500).send({ message: 'Server error while retrieving photo.' });
         console.log(error)
+    }
+});
+
+// GET /users/:id/books - Pegar todos os livros que um usuário possui
+router.get('/:id/books', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        const books = await Book.findAll({
+            where: { idVendedor: userId,
+                    available: true }
+        });
+
+        if (books.length === 0) {
+            return res.status(404).send({ message: 'No books found for this user' });
+        }
+
+        res.send(books);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: 'Server error while retrieving books' });
     }
 });
 
