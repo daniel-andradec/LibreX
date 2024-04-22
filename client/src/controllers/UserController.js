@@ -1,8 +1,8 @@
 import { makeRequest } from '../libs/RequestModule';
 import store from '@/store/index.js'
 
-const login = async (email, password) => {
-    const response = await makeRequest('POST', '/users/login', { email, password })
+const login = async (email, senha) => {
+    const response = await makeRequest('POST', '/users/login', { email, senha })
     return response
 }
 

@@ -39,17 +39,17 @@
               <div class="register-content">
                 <div class="change-password-container">
                     <div class="register-fields">
-                        <label for="name">Nome Completo</label>
-                        <input id="name" type="text" placeholder="Nome">
+                        <label for="nameReg">Nome Completo</label>
+                        <input id="nameReg" type="text" placeholder="Nome" ref="nameReg">
                       
                         <label for="emailReg">E-mail</label>
-                        <input id="emailReg" type="email" placeholder="E-mail">
+                        <input id="emailReg" type="email" placeholder="E-mail" ref="emailReg">
 
-                        <label for="cellphone">Celular</label>
-                        <input id="cellphone" type="text" placeholder="Celular">
+                        <label for="cellphoneReg">Celular</label>
+                        <input id="cellphoneReg" type="text" placeholder="Celular" ref="cellphoneReg" v-mask="'(##) #####-####'" v-model="registerData.cellphone">
 
                         <label for="passwordReg">Senha </label>
-                        <input id="passwordReg" type="password" placeholder="Senha">
+                        <input id="passwordReg" type="password" placeholder="Senha" ref="passwordReg">
                     </div>
                 </div>
                 <div class="submit-register-btn">
@@ -68,6 +68,7 @@ import { mapActions, mapGetters } from 'vuex'
 import logo from '@/assets/images/logo.png'
 import imgLogin from '@/assets/images/login_book.png'
 import icon from '@/assets/images/icon.png'
+import { login, logout } from '@/controllers/UserController'
 
 export default {
   name: 'LoginView',
@@ -80,16 +81,82 @@ export default {
           imgLogin,
           icon,
           registerModalOpen: false,
-          showPassword: false
+          showPassword: false,
+          registerData: {
+              name: '',
+              email: '',
+              cellphone: '',
+              password: ''
+          }
       }
   },
   methods: {
-      // ...mapActions(['setUser']),
+      ...mapActions(['setUser']),
       async login () {
-        console.log('login')
+        // log inputs
+        const email = this.$refs.email.value
+        const password = this.$refs.password.value
+
+        if (email === '' || password === '') {
+            this.$toast.open({
+                message: 'Preencha todos os campos obrigatórios',
+                type: 'error',
+                duration: 5000,
+                position: 'top-right'
+            });
+            return
+        }
+
+        // logout before login to avoid "already logged in" error
+        await logout().catch(() => {
+            console.log('Erro ao deslogar usuário.')
+        })
+
+        await login(email, password).then(async (res) => {
+            if (res.status === 200) {
+                  const userData = res.data
+                  const user = {
+                      id: userData.id,
+                      email: userData.email,
+                      name: userData.nome,
+                      photo: userData.foto
+                  }
+                  this.setUser(user)
+                  localStorage.setItem('user', JSON.stringify(user))
+                  this.$toast.open({
+                      message: 'Bem vindo(a)!',
+                      type: 'success',
+                      duration: 4000,
+                      position: 'top-right'
+                  });
+                  this.$router.push('/')
+            }
+        }).catch(async (err) => {
+            console.log(err)
+            this.$toast.open({
+                message: 'Usuário ou senha incorretos.',
+                type: 'error',
+                duration: 5000,
+                position: 'top-right'
+            });
+        })
       },
       async registerUser () {
-        console.log('registerUser')
+        console.log('registering user') 
+        const name = this.$refs.nameReg.value
+        const email = this.$refs.emailReg.value
+        const cellphone = this.$refs.cellphoneReg.value
+        const password = this.$refs.passwordReg.value
+
+        if (name === '' || email === '' || cellphone === '' || password === '') {
+            this.$toast.open({
+                message: 'Preencha todos os campos obrigatórios',
+                type: 'error',
+                duration: 5000,
+                position: 'top-right'
+            });
+            return
+        }
       }
   },
   computed: {

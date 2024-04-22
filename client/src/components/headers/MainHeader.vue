@@ -5,7 +5,7 @@
 
       <div class="login-container" @mouseover="showDropdown" @mouseleave="hideDropdown">
           <div class="user-icon">
-              <img :src="usericon" alt="User icon" />
+              <img :src="userPhoto" alt="User icon" />
           </div>
 
           <!-- <div class="login">
@@ -19,7 +19,7 @@
           </div>
         -->
 
-          <div class="options" v-if="isDropDownVisible">
+          <div class="options-header" v-if="isDropDownVisible">
               <div class="option" @click="navigateToProfile()">
                   <i class="fa fa-user-circle"></i>
                   Minha conta
@@ -36,7 +36,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-// import { logout } from '@/controllers/UserController'
+import { logout } from '@/controllers/UserController'
 import logo from '@/assets/images/logo.png'
 import usericon from '@/assets/images/user.svg'
 
@@ -50,7 +50,8 @@ export default {
           logo,
           usericon,
           searchText: '',
-          isDropDownVisible: false
+          isDropDownVisible: false,
+          userPhoto: ''
       }
   },
   methods: {
@@ -78,14 +79,21 @@ export default {
               this.$router.push('/profile')
       },
       async logout () {
-        // todo: implement logout
+        await logout().catch(() => {
+          console.log('Erro ao deslogar usuário.')
+        })
         this.$router.push('/login')
       }
   },
   computed: {
-      // ...mapGetters(['getCartTotalQuantity', 'getCartProducts', 'loggedInUser'])
+      ...mapGetters(['loggedInUser'])
   },
   mounted() {
+    // user photo is smth like uploads\\1713725475470.webp in api folder
+    // need only //1713725475470.webp
+    const photoLink = this.loggedInUser?.photo?.replace(/\\/g, '/').replace('uploads', 'uploads/')
+    this.userPhoto = `http://localhost:3000/${photoLink}`
+    console.log(this.userPhoto)
   }
 }
 </script>
@@ -124,22 +132,7 @@ export default {
           }
       }
 
-      // .login {
-      //     margin: 10px 70px;
-      //     color: var(--secondaryColor);
-      //     font-size: 18px;
-      //     font-weight: 500;
-
-      //     i {
-      //         margin-right: 10px;
-      //     }
-      //     span {
-      //         color: var(--primaryColor);
-      //         cursor: pointer;
-      //     }
-      // }
-
-      .options {
+      .options-header {
           position: absolute;
           background: #FFF;
           border-radius: 5px;
@@ -153,12 +146,14 @@ export default {
               padding: 10px 15px;
               display: flex;
               align-items: center;
+              font-size: 16px;
 
               &:hover {
                   background: #F4F4F4;
               }
 
               i {
+                  font-size: 20px;
                   margin-right: 10px;
                   color: var(--secondaryColor);
               }

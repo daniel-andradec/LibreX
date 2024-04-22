@@ -4,11 +4,15 @@ const cookieParser = require('cookie-parser');
 const userRoutes = require('../routes/users');
 const bookRoutes = require('../routes/books');
 const saleRoutes = require('../routes/sales');
-
-
+const cors = require('cors');
 
 const app = express();
 
+const options = {
+    origin: 'http://localhost:8080',
+    credentials: true
+};
+app.use(cors(options));
 
 app.use(cookieParser())
 app.use(bodyParser.json())

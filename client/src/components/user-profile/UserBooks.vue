@@ -15,7 +15,7 @@
         </div>
     </div>
     
-    <div class="book-list">
+    <div class="book-list-profile">
         <div class="book" v-for="book in books" :key="book.title">
             <img :src="book.image" />
             <div class="name">{{ fixLength(book.title) }}</div>
@@ -174,7 +174,7 @@ export default {
     }
   }
 
-  .book-list {
+  .book-list-profile {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;

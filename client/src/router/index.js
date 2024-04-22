@@ -1,8 +1,8 @@
 import { nextTick } from "vue";
 import { createRouter, createWebHashHistory } from "vue-router";
+import store from "../store/index.js";
 
 // Views
-import HomeView from '@/views/HomeView.vue'
 import LoginView from "@/views/LoginView.vue"
 import BookView from "@/views/BookView.vue";
 import ProfileView from "@/views/ProfileView.vue";
@@ -16,7 +16,7 @@ const routes = [
     meta: {
       title: "Home"
     },
-    component: HomeView,
+    component: ListView,
   },
   {
     path: "/login",
@@ -61,6 +61,24 @@ router.afterEach((to) => {
   nextTick(() => {
     document.title = to.meta.title || "LibreX";
   });
+});
+
+router.beforeEach((to, from, next) => {
+  if (!store.state.user.user.id) {
+    const user = localStorage.getItem("user");
+    if (user) {
+      store.dispatch("setUser", JSON.parse(user));
+    } else {
+      // go to login page if user is not logged in
+      if (to.name !== "login") {
+        window.alert("Você precisa estar logado para acessar esta página!");
+        next({ name: "login" });
+        return;
+      }
+    }
+  }
+
+  next();
 });
 
 export default router;

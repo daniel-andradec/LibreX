@@ -1,7 +1,7 @@
 import axios from  'axios'
 
 const makeRequest = async (method = 'get', uri, data = {}, form) => {
-    const baseUrl = 'http://localhost:3030/api'
+    const baseUrl = 'http://localhost:3000'
     const url = baseUrl + uri
 
     const result = await axios({

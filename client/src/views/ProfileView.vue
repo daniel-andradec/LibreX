@@ -6,7 +6,7 @@
     
     <div class="user-info">
       <img class="user-image" :src="userImage" alt="User image" />
-      <h1>Enzo Pinheiro</h1>
+      <h1>{{ userName }}</h1>
     </div>
 
     <div class="profile-options">
@@ -39,6 +39,7 @@ import userImage from '@/assets/images/user.svg'
 import UserBooks from '@/components/user-profile/UserBooks.vue'
 import UserHistory from '@/components/user-profile/UserHistory.vue'
 import UserRegistration from '@/components/user-profile/UserRegistration.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ProfileView',
@@ -51,6 +52,7 @@ export default {
     return {
       icon,
       userImage,
+      userName: 'Usuário',
       selectedOption: 'books'
     }
   },
@@ -60,8 +62,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['loggedInUser'])
   },
   mounted() {
+    const photoLink = this.loggedInUser?.photo?.replace(/\\/g, '/').replace('uploads', 'uploads/')
+    this.userImage = `http://localhost:3000/${photoLink}`
+    this.userName = this.loggedInUser?.name
+    console.log(this.loggedInUser)
   }
 }
 </script>
@@ -82,6 +89,7 @@ export default {
       height: 50px;
       object-fit: contain;
       margin-top: 20px;
+      cursor: pointer;
     }
   }
 
