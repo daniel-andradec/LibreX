@@ -27,7 +27,7 @@ const routes = [
     component: LoginView,
   },
   {
-    path: "/book",
+    path: "/book/:bookId",
     name: "book",
     meta: {
       title: "Book"

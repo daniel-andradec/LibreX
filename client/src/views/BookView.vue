@@ -11,31 +11,33 @@
         <i class="fa-solid fa-arrow-left" @click="this.$router.push('/')">  </i>
 
         <div class ="book-info">
-            <h1>{{ book.title }}</h1>
+            <h1>{{ book.titulo }}</h1>
         
-            <h2>{{ book.authors.join(', ') }}</h2>
+            <h2>{{ book.autores }}</h2>
 
             <div class="book-details">
                 <div class="detail">
-                    <p class="label">Curso </p><p>{{ book.course }}</p>
+                    <p class="label">Curso </p><p>{{ book.curso }}</p>
                 </div>
                 <div class="detail">
-                    <p class="label">Disciplina</p><p> {{ book.subject }}</p>
+                    <p class="label">Disciplina</p><p> {{ book.disciplina }}</p>
                 </div>
             </div>
 
             <div class="book-details">
                 <div class="detail">
-                    <p class="label">Estado de conservação</p><p> {{ book.condition }}</p>
+                    <p class="label">Estado de conservação</p>
+                    <p>{{ book.estadoConservacao === 1 ? 'Excelente' : book.estadoConservacao === 2 ? 'Bom' : book.estadoConservacao === 3 ? 'Razoável' : '' }}</p>
                 </div>
             </div>
 
             <div class="book-details">
                 <div class="detail">
-                    <p class="label">Disponível para</p><p> {{ book.availableFor }}</p>
+                    <p class="label">Disponível para</p>
+                    <p>{{ book.preco === 0 ? 'Doação' : 'Venda' }}</p>
                 </div>
                 <div class="detail">
-                    <p class="label">Preço</p><p> R$ {{ book.price }}</p>
+                    <p class="label">Preço</p><p> R$ {{ book.preco }}</p>
                 </div>
             </div>
         </div>
@@ -45,14 +47,14 @@
         <div class="book-image">
 
             <!-- <img :src="book.imageUrl" alt="Imagem do livro" /> -->
-            <img :src="livroExemplo" alt="Imagem do livro" /> 
+            <img :src="book.image" alt="Imagem do livro" /> 
 
             <div class="livro-anunciante">
                 <p class="livro">Livro anunciado por</p>
 
                 <div class="anunciante">
-                    <img class="dono" :src="userImage" alt="Imagem do anunciante" />
-                    <p class="anunciante-nome">{{ donodolivro.nome }}</p>
+                    <img class="dono" :src="vendor.image" alt="Imagem do anunciante" />
+                    <p class="anunciante-nome">{{ vendor.nome }}</p>
                 </div>
                 
             </div>
@@ -70,6 +72,9 @@
 import livroExemplo from '@/assets/images/livro-exemplo.png';
 import MainHeader from '@/components/headers/MainHeader.vue';
 import userImage from '@/assets/images/user.svg';
+import { getBook } from '@/controllers/BookController';
+import { getUser} from '@/controllers/UserController';
+import { getVendor} from '@/controllers/BookController';
 
 export default {
   name: 'BookView',
@@ -78,23 +83,62 @@ export default {
   },
   data() {
     return {
-      book: {
-        title: 'Matemática Compreensão e práticaaaaaaaaaaa',
-        authors: ['Énio Silveira', 'Cláudio Marques'],
-        course: 'Matemática',
-        subject: 'Introdução à Matemática',
-        condition: 'Bom',
-        availableFor: 'Venda',
-        price: 70.00,
-        imageUrl: 'link-para-imagem-do-livro.jpg',
-      },
-      donodolivro: {
-        nome: "Balchandra"
+    //   book: {
+    //     title: 'Matemática Compreensão e práticaaaaaaaaaaa',
+    //     authors: ['Énio Silveira', 'Cláudio Marques'],
+    //     course: 'Matemática',
+    //     subject: 'Introdução à Matemática',
+    //     condition: 'Bom',
+    //     availableFor: 'Venda',
+    //     price: 70.00,
+    //     imageUrl: 'link-para-imagem-do-livro.jpg',
+    //   },
+    //   donodolivro: {
+    //     nome: "Balchandra"
 
-      },
-      livroExemplo,
-      userImage
+    //   },
+    //   livroExemplo,
+    //   userImage
+    book: {},
+    vendor: {},
+
     };
+  },
+
+async mounted() {
+    // this.getBook();
+    console.log(this.$route.params.bookId);
+
+    const bookId = this.$route.params.bookId;
+
+    await getBook(bookId).then((response) => {
+      const book = response.data;
+
+       const photoLink = book.foto.replace(/\\/g, '/').replace('uploads', 'uploads/')
+        book.image = 'http://localhost:3000/' + photoLink
+        
+        this.book = book;
+      console.log(book)
+      
+    }).catch((error) => {
+      console.log(error)
+    })
+
+    console.log("oi", this.book.idVendedor);
+
+    await getVendor(this.book.idVendedor).then((response) => {
+      const vendor = response.data;
+
+      const photoLink = vendor.foto.replace(/\\/g, '/').replace('uploads', 'uploads/')
+        vendor.image = 'http://localhost:3000/' + photoLink
+      this.vendor = vendor;
+      console.log(vendor)
+    }).catch((error) => {
+      console.log(error)
+    })
+
+
+
   },
   
 };
@@ -242,6 +286,8 @@ export default {
                 
                     .anunciante-nome{
                         color: #ffffff;
+                        font-weight: bold;
+                        margin-top: 7px;
                         text-align: left;
                         font-size:20px;
 

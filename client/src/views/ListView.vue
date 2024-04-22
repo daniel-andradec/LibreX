@@ -5,7 +5,7 @@
     </header>
            
  <div class="book-list" v-if="books.length > 0">
-  <div class="list-item" v-for="(book) in books" :key="book.id" @click="this.$router.push('book')">
+    <div class="list-item" v-for="book in filteredBooks" :key="book.id" @click="goToBook(book.id)">
     <div class="book-container">
       <img :src="book.image" class="book-image" alt="Cover image" />
 
@@ -39,7 +39,7 @@ import livroExemplo from '@/assets/images/livro-exemplo.png';
 import { mapGetters, mapActions } from 'vuex'
 import MainHeader from '@/components/headers/MainHeader.vue';
 import userImage from '@/assets/images/user.svg';
-import { getAllBooks } from '@/controllers/BooksController'
+import { getAllBooks } from '@/controllers/AllBooksController'
 
 
 export default {
@@ -75,9 +75,16 @@ export default {
     }
   },
   computed: {
-      ...mapGetters(['loggedInUser'])
+      ...mapGetters(['loggedInUser']),
+
+    filteredBooks() {
+    return this.books.filter(book => book.idVendedor !== this.loggedInUser.id);
+  }
   },
   methods: {
+    goToBook(id) {
+      this.$router.push(`/book/${id}`)
+    }
    
   },
   async mounted() {
