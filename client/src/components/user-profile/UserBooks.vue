@@ -15,7 +15,7 @@
         </div>
     </div>
     
-    <div class="book-list-profile">
+    <div class="book-list-profile" v-if="books.length > 0">
         <div class="book" v-for="book in books" :key="book.id">
             <img :src="book.image" />
             <div class="name">{{ fixLength(book.titulo) }}</div>
@@ -23,7 +23,11 @@
         </div>
     </div>
 
-    <BookRegistrationModal :modalOpen="bookModalOpen" @closeModal="bookModalOpen = false" />
+    <div v-else class="not-found">
+        <h3> Você ainda não cadastrou nenhum livro </h3>
+    </div>
+
+    <BookRegistrationModal :modalOpen="bookModalOpen" @closeModal="closeBookModal()" />
   </div>
 </template>
 
@@ -55,15 +59,10 @@ export default {
     searchProduct() {
         // verificar logica para nao resetar a lista de livros em cada busca
         // this.books = this.books.filter(book => book.title.toLowerCase().includes(this.searchText.toLowerCase()))
-    }
-  },
-  computed: {
-    ...mapGetters(['loggedInUser']),
-  },
-  mounted() {
-    const id = this.loggedInUser?.id
-    if (id) {
-      getUserBooks(id).then((response) => {
+    },
+    async closeBookModal() {
+      this.bookModalOpen = false
+      await getUserBooks(this.loggedInUser?.id).then((response) => {
         // filtra para setar imagem corretamente
         const books = response.data
 
@@ -72,7 +71,28 @@ export default {
           book.image = 'http://localhost:3000/' + photoLink
         })
 
-        this.books = response.data
+        this.books = books
+        // this.booksCopy = response.data
+        console.log(response)
+      })
+    }
+  },
+  computed: {
+    ...mapGetters(['loggedInUser']),
+  },
+  async mounted() {
+    const id = this.loggedInUser?.id
+    if (id) {
+      await getUserBooks(id).then((response) => {
+        // filtra para setar imagem corretamente
+        const books = response.data
+
+        books.forEach(book => {
+          const photoLink = book.foto.replace(/\\/g, '/').replace('uploads', 'uploads/')
+          book.image = 'http://localhost:3000/' + photoLink
+        })
+
+        this.books = books
         // this.booksCopy = response.data
         console.log(response)
       })
@@ -149,6 +169,18 @@ export default {
             color: var(--primaryColor);
             cursor: pointer;
         }
+    }
+  }
+
+  .not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    margin-top: 40px;
+
+    h3 {
+        font-weight: 500;
     }
   }
 

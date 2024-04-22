@@ -6,17 +6,17 @@
           <div class="top-fields">
               <div class="text-inputs">
                   <h3><span>*</span> Campos obrigatórios</h3>
-                  <label for="name">Nome <span>*</span></label>
-                  <input type="text" placeholder="Nome" required ref="name" data-testid="product-name-input" >
+                  <label for="name">Título <span>*</span></label>
+                  <input type="text" placeholder="Título" required ref="name" >
 
-                  <label for="description">Autor(es) <span>*</span></label>
-                  <input type="text" placeholder="Autor(es)" required ref="description" data-testid="product-description-input">
+                  <label for="author">Autor(es) <span>*</span></label>
+                  <input type="text" placeholder="Autor(es)" required ref="author">
               </div>
               <div class="image-input">
                   <label for="inputfile" class="add-image-label" v-if="!imagePreviewUrl">
                       Adicionar imagem
                   </label>
-                  <input type="file" id="inputfile" @change="handleFileUpload" class="file-input" ref="inputfile" data-testid="product-image-input" >
+                  <input type="file" id="inputfile" @change="handleFileUpload" class="file-input" ref="inputfile" >
                   <div class="image-preview" v-if="imagePreviewUrl" @click="triggerFileInput">
                       <img :src="imagePreviewUrl" alt="Preview da imagem">
                       <h2>Alterar imagem</h2>
@@ -27,17 +27,35 @@
           <div class="middle-fields">
               <div>
                   <label for="price">Preço <span>*</span></label>
-                  <input type="text" placeholder="Preço" required ref="price" @keypress="formatInput" data-testid="product-price-input" />
+                  <input type="text" placeholder="Preço" required ref="price" @keypress="formatInput" />
               </div>
 
               <div>
                   <label for="quantity">Estado de Conservação <span>*</span></label>
-                  <select name="condition" id="condition" required ref="condition" data-testid="product-condition-input">
-                      <option value="bom">Bom</option>
-                      <option value="médio">Médio</option>
-                      <option value="ruim">Ruim</option>
+                  <select name="condition" id="condition" required ref="condition">
+                      <option value="1">Bom</option>
+                      <option value="2">Médio</option>
+                      <option value="3">Ruim</option>
                   </select>
               </div>
+          </div>
+
+          <div class="bottom-fields">
+            <div>
+              <label for="discipline">Disciplina <span>*</span></label>
+              <input type="text" placeholder="Disciplina" required ref="discipline">
+            </div>
+            <div>
+              <label for="course">Curso <span>*</span></label>
+              <input type="text" placeholder="Curso" required ref="course">
+            </div>
+          </div>
+
+          <div class="donation-field">
+            <div class="donation">
+                <input type="checkbox" id="donation" name="donation" value="doacao" ref="donation" v-model="isDonation">
+                <label for="donation">Doação</label>
+            </div>
           </div>
 
           <div class="buttons">
@@ -46,7 +64,7 @@
                   class="save" 
                   @click="handleSave" 
                   v-if="!loading" 
-                  data-testid="product-save-button">
+                >
                       Salvar
               </button>
               <div class="loading" v-else>
@@ -60,6 +78,8 @@
 
 <script>
 import ModalComponent from '@/components/modals/ModalComponent.vue'
+import { mapGetters } from 'vuex'
+import { addUserBook } from '@/controllers/ProfileController'
 
 export default {
   name: 'VendorProductModal',
@@ -72,7 +92,8 @@ export default {
       imagePreviewUrl: null,
       imgFile: null,
       fileChanged: false,
-      loading: false
+      loading: false,
+      isDonation: false
     }
   },
   methods: {
@@ -98,14 +119,96 @@ export default {
             this.imgFile = file
         }
     },
+    async handleSave() {
+        this.loading = true
+        const name = this.$refs.name.value
+        const author = this.$refs.author.value
+        const price = this.$refs.price.value
+        const condition = this.$refs.condition.value
+        const discipline = this.$refs.discipline.value
+        const course = this.$refs.course.value
+        const idVendedor = this.loggedInUser.id
+
+        if (this.isDonation) {
+            this.$refs.price.value = '0.00'
+        }
+
+        if (!name || !author || !price || !condition || !discipline || !course) {
+            this.$toast.open({
+                message: 'Preencha todos os campos obrigatórios',
+                type: 'warning',
+                position: 'top-right',
+                duration: 5000
+            })
+            this.loading = false
+            return
+        }
+
+        const formData = new FormData()
+        formData.append('titulo', name)
+        formData.append('autores', author)
+        formData.append('preco', price)
+        formData.append('estadoConservacao', condition)
+        formData.append('disciplina', discipline)
+        formData.append('curso', course)
+        formData.append('foto', this.imgFile);
+        formData.append('idVendedor', idVendedor)
+
+        await addUserBook(formData).then((res) => {
+          console.log('response', res)
+          if (res.status === 201) {
+              this.$toast.open({
+                  message: 'Livro cadastrado com sucesso',
+                  type: 'success',
+                  position: 'top-right',
+                  duration: 5000
+              })
+              this.loading = false
+              this.$emit('closeModal')
+          } else {
+              this.$toast.open({
+                  message: 'Erro ao cadastrar livro',
+                  type: 'error',
+                  position: 'top-right',
+                  duration: 5000
+              })
+              this.loading = false
+              this.$emit('closeModal')
+          }
+        }).catch(() => {
+            this.$toast.open({
+                message: 'Erro ao cadastrar livro',
+                type: 'error',
+                position: 'top-right',
+                duration: 5000
+            })
+            this.loading = false
+            this.$emit('closeModal')
+        })
+        
+    },
     triggerFileInput() {
         this.$refs.inputfile.click()
     }
   },
   computed: {
-
+    ...mapGetters(['loggedInUser']),
   },
   mounted() {
+  },
+  watch: {
+    // watch isDonation and set price to not editable
+    isDonation() {
+        if (this.isDonation) {
+           this.$refs.price.setAttribute('disabled', true)
+           this.$refs.price.value = '0.00' 
+           this.$refs.price.style.backgroundColor = '#f2f2f2'
+          
+        } else {
+          this.$refs.price.removeAttribute('disabled')
+          this.$refs.price.style.backgroundColor = '#fff'
+        }
+    }
   }
 }
 </script>
@@ -235,6 +338,51 @@ export default {
             width: 180px;
             color: #737373;
         }
+    }
+    
+    .bottom-fields {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        div {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        & > div:first-child {
+            margin-right: 40px;
+        }
+    } 
+
+    .donation-field {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .donation {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: flex-start;
+          margin-left: 1px;
+
+          input {
+              width: 20px;
+              height: 20px;
+              margin-right: 10px;
+          }
+
+          label {
+              font-size: 14px;
+              font-weight: 500;
+              color: #232323;
+          }
+      }
     }
 
     .buttons {

@@ -17,7 +17,7 @@
                   <input 
                       :id="field.ref" 
                       :type="field.type" 
-                      :placeholder="field.ref === 'name' ? loggedInUser.name : field.ref === 'email' ? loggedInUser.email : field.ref == 'cellphone' ? loggedInUser.numero : field.placeholder"
+                      :placeholder="field.ref === 'name' ? loggedInUser.name : field.ref === 'email' ? loggedInUser.email : field.ref == 'cellphone' ? loggedInUser.cellphone : field.placeholder"
                       :disabled="field.disable"
                       @input="field.input && this[field.input]($event); formatValue($event, field.format)" />
               </div>

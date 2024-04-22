@@ -38,7 +38,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import { logout } from '@/controllers/UserController'
 import logo from '@/assets/images/logo.png'
-import usericon from '@/assets/images/user.svg'
+import userDefault from '@/assets/images/user-default-image.png'
 
 export default {
   name: 'CustomerHeader',
@@ -48,7 +48,7 @@ export default {
   data() {
       return {
           logo,
-          usericon,
+          userDefault,
           searchText: '',
           isDropDownVisible: false,
           userPhoto: ''
@@ -91,9 +91,15 @@ export default {
   mounted() {
     // user photo is smth like uploads\\1713725475470.webp in api folder
     // need only //1713725475470.webp
-    const photoLink = this.loggedInUser?.photo?.replace(/\\/g, '/').replace('uploads', 'uploads/')
-    this.userPhoto = `http://localhost:3000/${photoLink}`
-    console.log(this.userPhoto)
+    console.log(this.loggedInUser)
+    if (!this.loggedInUser?.photo) {
+      this.userPhoto = userDefault
+      return
+    }
+    else {
+      const photoLink = this.loggedInUser?.photo?.replace(/\\/g, '/').replace('uploads', 'uploads/')
+      this.userPhoto = `http://localhost:3000/${photoLink}`
+    }
   }
 }
 </script>

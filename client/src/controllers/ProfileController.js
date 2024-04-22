@@ -1,10 +1,5 @@
 import { makeRequest } from '../libs/RequestModule';
 import store from '@/store/index.js'
-// const getUser = async () => {
-//     // gets the logged in user
-//     const response = (await makeRequest('GET', '/users/user'))?.data
-//     return response
-// }
 
 const getUserBooks = async (id) => {
     // gets the logged in user
@@ -12,4 +7,12 @@ const getUserBooks = async (id) => {
     return response
 }
 
-export { getUserBooks }
+const addUserBook = async (formData) => {
+    // gets the logged in user
+    console.log(formData)
+    const response = (await makeRequest('POST', `/books`, formData, true))
+    console.log(response)
+    return response
+}
+
+export { getUserBooks, addUserBook }

@@ -46,7 +46,7 @@
                         <input id="emailReg" type="email" placeholder="E-mail" ref="emailReg">
 
                         <label for="cellphoneReg">Celular</label>
-                        <input id="cellphoneReg" type="text" placeholder="Celular" ref="cellphoneReg" v-mask="'(##) #####-####'" v-model="registerData.cellphone">
+                        <input id="cellphoneReg" type="text" placeholder="Celular" ref="cellphoneReg">
 
                         <label for="passwordReg">Senha </label>
                         <input id="passwordReg" type="password" placeholder="Senha" ref="passwordReg">
@@ -96,7 +96,6 @@ export default {
         // log inputs
         const email = this.$refs.email.value
         const password = this.$refs.password.value
-        const cellphone = this.$refs.cellphone.value
 
         if (email === '' || password === '') {
             this.$toast.open({
@@ -161,7 +160,7 @@ export default {
         }
 
         await register(name, email, cellphone, password).then(async (res) => {
-            if (res.status === 200) {
+            if (res.status === 201) {
                 this.$toast.open({
                     message: 'Usuário cadastrado com sucesso! Faça seu login.',
                     type: 'success',
@@ -173,7 +172,7 @@ export default {
         }).catch(async (err) => {
             console.log(err)
             this.$toast.open({
-                message: 'Erro ao cadastrar usuário.',
+                message: 'Erro ao cadastrar usuário. Verifique os campos e tente novamente.',
                 type: 'error',
                 duration: 5000,
                 position: 'top-right'

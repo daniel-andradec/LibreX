@@ -35,7 +35,7 @@
 
 <script>
 import icon from '@/assets/images/icon.png'
-import userImage from '@/assets/images/user.svg'
+import userDefault from '@/assets/images/user-default-image.png'
 import UserBooks from '@/components/user-profile/UserBooks.vue'
 import UserHistory from '@/components/user-profile/UserHistory.vue'
 import UserRegistration from '@/components/user-profile/UserRegistration.vue'
@@ -51,7 +51,8 @@ export default {
   data() {
     return {
       icon,
-      userImage,
+      userDefault,
+      userImage: '',
       userName: 'Usuário',
       selectedOption: 'books'
     }
@@ -65,10 +66,14 @@ export default {
     ...mapGetters(['loggedInUser'])
   },
   mounted() {
-    const photoLink = this.loggedInUser?.photo?.replace(/\\/g, '/').replace('uploads', 'uploads/')
-    this.userImage = `http://localhost:3000/${photoLink}`
+    if (!this.loggedInUser?.photo) {
+      this.userImage = this.userDefault
+    }
+    else {
+      const photoLink = this.loggedInUser?.photo?.replace(/\\/g, '/').replace('uploads', 'uploads/')
+      this.userImage = `http://localhost:3000/${photoLink}`
+    }
     this.userName = this.loggedInUser?.name
-    console.log(this.loggedInUser)
   }
 }
 </script>
