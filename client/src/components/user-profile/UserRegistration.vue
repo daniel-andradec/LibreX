@@ -17,7 +17,7 @@
                   <input 
                       :id="field.ref" 
                       :type="field.type" 
-                      :placeholder="field.placeholder"
+                      :placeholder="field.ref === 'name' ? loggedInUser.name : field.ref === 'email' ? loggedInUser.email : field.ref == 'cellphone' ? loggedInUser.numero : field.placeholder"
                       :disabled="field.disable"
                       @input="field.input && this[field.input]($event); formatValue($event, field.format)" />
               </div>
@@ -53,6 +53,7 @@
 
 <script>
 import ModalComponent from '@/components/modals/ModalComponent.vue';
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'UserRegistration',
@@ -160,8 +161,10 @@ export default {
     }
   },
   computed: {
+      ...mapGetters(['loggedInUser']),
   },
   mounted() {
+     console.log(this.loggedInUser)
   }
 }
 

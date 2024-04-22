@@ -96,6 +96,7 @@ export default {
         // log inputs
         const email = this.$refs.email.value
         const password = this.$refs.password.value
+        const cellphone = this.$refs.cellphone.value
 
         if (email === '' || password === '') {
             this.$toast.open({
@@ -119,7 +120,8 @@ export default {
                       id: userData.id,
                       email: userData.email,
                       name: userData.nome,
-                      photo: userData.foto
+                      photo: userData.foto,
+                      cellphone: userData.celular,
                   }
                   this.setUser(user)
                   localStorage.setItem('user', JSON.stringify(user))

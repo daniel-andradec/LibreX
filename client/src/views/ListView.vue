@@ -87,6 +87,7 @@ export default {
     }
    
   },
+  
   async mounted() {
     console.log(this.loggedInUser?.id)
 

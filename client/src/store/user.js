@@ -4,7 +4,8 @@ export default {
           id: null,
           name: null,
           email: null,
-          photo: null
+          photo: null,
+          cellphone: null,
       }
   },
   mutations: { // methods to change state
@@ -16,7 +17,8 @@ export default {
               id: null,
               name: null,
               email: null,
-              photo: null
+              photo: null,
+              cellphone: null,
           }
 
           localStorage.removeItem('user')
