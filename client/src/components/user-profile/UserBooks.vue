@@ -16,10 +16,10 @@
     </div>
     
     <div class="book-list-profile">
-        <div class="book" v-for="book in books" :key="book.title">
+        <div class="book" v-for="book in books" :key="book.id">
             <img :src="book.image" />
-            <div class="name">{{ fixLength(book.title) }}</div>
-            <div class="price"> {{ formatValue(book.price) }}</div>
+            <div class="name">{{ fixLength(book.titulo) }}</div>
+            <div class="price"> {{ formatValue(book.preco) }}</div>
         </div>
     </div>
 
@@ -29,6 +29,8 @@
 
 <script>
 import BookRegistrationModal from '@/components/modals/BookRegistrationModal.vue'
+import { getUserBooks } from '@/controllers/ProfileController'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'UserBooks',
@@ -39,48 +41,7 @@ export default {
     return {
       searchText: '',
       bookModalOpen: false,
-      books: [
-        {
-          title: 'Introduction to Algorithms',
-          price: 235,
-          image: 'https://m.media-amazon.com/images/I/61Pgdn8Ys-L._AC_UF1000,1000_QL80_.jpg'
-        },
-        {
-          title: 'Calculo: Volume 2',
-          price: 150,
-          image: 'https://m.media-amazon.com/images/I/61oaBUaZwiL._AC_UF1000,1000_QL80_.jpg'
-        },
-        {
-          title: 'Calculo: Volume 2',
-          price: 150,
-          image: 'https://m.media-amazon.com/images/I/61oaBUaZwiL._AC_UF1000,1000_QL80_.jpg'
-        },
-        {
-          title: 'Calculo: Volume 2',
-          price: 150,
-          image: 'https://m.media-amazon.com/images/I/61oaBUaZwiL._AC_UF1000,1000_QL80_.jpg'
-        },
-        {
-          title: 'Calculo: Volume 2',
-          price: 150,
-          image: 'https://m.media-amazon.com/images/I/61oaBUaZwiL._AC_UF1000,1000_QL80_.jpg'
-        },
-        {
-          title: 'Calculo: Volume 2',
-          price: 150,
-          image: 'https://m.media-amazon.com/images/I/61oaBUaZwiL._AC_UF1000,1000_QL80_.jpg'
-        },
-        {
-          title: 'Calculo: Volume 2',
-          price: 150,
-          image: 'https://m.media-amazon.com/images/I/61oaBUaZwiL._AC_UF1000,1000_QL80_.jpg'
-        },
-        {
-          title: 'Calculo: Volume 2',
-          price: 150,
-          image: 'https://m.media-amazon.com/images/I/61oaBUaZwiL._AC_UF1000,1000_QL80_.jpg'
-        }
-      ],
+      books: [],
       booksCopy: []
     }
   },
@@ -97,8 +58,25 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['loggedInUser']),
   },
   mounted() {
+    const id = this.loggedInUser?.id
+    if (id) {
+      getUserBooks(id).then((response) => {
+        // filtra para setar imagem corretamente
+        const books = response.data
+
+        books.forEach(book => {
+          const photoLink = book.foto.replace(/\\/g, '/').replace('uploads', 'uploads/')
+          book.image = 'http://localhost:3000/' + photoLink
+        })
+
+        this.books = response.data
+        // this.booksCopy = response.data
+        console.log(response)
+      })
+    }
   }
 }
 </script>

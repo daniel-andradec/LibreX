@@ -68,7 +68,7 @@ import { mapActions, mapGetters } from 'vuex'
 import logo from '@/assets/images/logo.png'
 import imgLogin from '@/assets/images/login_book.png'
 import icon from '@/assets/images/icon.png'
-import { login, logout } from '@/controllers/UserController'
+import { login, logout, register } from '@/controllers/UserController'
 
 export default {
   name: 'LoginView',
@@ -157,6 +157,26 @@ export default {
             });
             return
         }
+
+        await register(name, email, cellphone, password).then(async (res) => {
+            if (res.status === 200) {
+                this.$toast.open({
+                    message: 'Usuário cadastrado com sucesso! Faça seu login.',
+                    type: 'success',
+                    duration: 4000,
+                    position: 'top-right'
+                });
+                this.registerModalOpen = false
+            }
+        }).catch(async (err) => {
+            console.log(err)
+            this.$toast.open({
+                message: 'Erro ao cadastrar usuário.',
+                type: 'error',
+                duration: 5000,
+                position: 'top-right'
+            });
+        })
       }
   },
   computed: {

@@ -23,4 +23,9 @@ const logout = async () => {
     return response
 }
 
-export { login, getUser, logout, updatePassword }
+const register = async (nome, email, celular, senha) => {
+    const response = await makeRequest('POST', '/users', { nome, email, celular, senha })
+    return response
+}
+
+export { login, getUser, logout, updatePassword, register }
