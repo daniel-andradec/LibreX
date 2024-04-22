@@ -7,20 +7,20 @@
  <div class="book-list" v-if="books.length > 0">
   <div class="list-item" v-for="(book) in books" :key="book.id" @click="this.$router.push('book')">
     <div class="book-container">
-      <img :src="book.cover" class="book-image" alt="Cover image" />
+      <img :src="book.image" class="book-image" alt="Cover image" />
 
       <div class="books-info">
-        <h2 class="title">{{ book.title }}</h2>
-         <div class="authors">{{ book.authors }}</div>
+        <h2 class="title">{{ book.titulo }}</h2>
+         <div class="authors">{{ book.autores }}</div>
          <div class="school-info">
-        <div class="major">{{ book.major }}</div>
-        <div class="subject">{{ book.subject }}</div>
+        <div class="major">{{ book.curso }}</div>
+        <div class="subject">{{ book.disciplina}}</div>
        
          </div>
           <div v-if="book.price === 0" class="price">
             <i class="fa-solid fa-hand-holding-heart"></i>
             </div>
-            <div v-else class="price">R$ {{ book.price.toFixed(2) }}</div>
+            <div v-else class="price">R$ {{ book.preco.toFixed(2) }}</div>
 
       </div>
     </div>
@@ -36,8 +36,10 @@
 
 <script>
 import livroExemplo from '@/assets/images/livro-exemplo.png';
+import { mapGetters, mapActions } from 'vuex'
 import MainHeader from '@/components/headers/MainHeader.vue';
 import userImage from '@/assets/images/user.svg';
+import { getAllBooks } from '@/controllers/BooksController'
 
 
 export default {
@@ -47,35 +49,55 @@ export default {
   }, 
   data() {
     return {
-       books: [
-      {
-        id: 1,
-        title: 'Matemática Compreensão e Prática',
-        authors: 'Énio Silveira, Cláudio Marques',
-        major: 'Matemática',
-        subject: 'Introdução a Matemática',
-        price: 70.00,
-        cover: livroExemplo 
-      },
-      {
-        id: 2,
-        title: 'Matemática Compreensão e Prática',
-        authors: 'Énio Silveira, Cláudio Marques',
-        major: 'Matemática',
-        subject: 'Introdução a Matemática',
-        price: 0,
-        cover: livroExemplo 
+    //    books: [
+    //   {
+    //     id: 1,
+    //     title: 'Matemática Compreensão e Prática',
+    //     authors: 'Énio Silveira, Cláudio Marques',
+    //     major: 'Matemática',
+    //     subject: 'Introdução a Matemática',
+    //     price: 70.00,
+    //     cover: livroExemplo 
+    //   },
+    //   {
+    //     id: 2,
+    //     title: 'Matemática Compreensão e Prática',
+    //     authors: 'Énio Silveira, Cláudio Marques',
+    //     major: 'Matemática',
+    //     subject: 'Introdução a Matemática',
+    //     price: 0,
+    //     cover: livroExemplo 
        
-      }
+    //   }
       
-    ]
+    // ]
+    books:[]
     }
   },
-  methods: {
-    //
+  computed: {
+      ...mapGetters(['loggedInUser'])
   },
-  mounted() {
-    console.log('ListView mounted')
+  methods: {
+   
+  },
+  async mounted() {
+    console.log(this.loggedInUser?.id)
+
+    await getAllBooks().then((response) => {
+        
+        const books = response.data
+
+        books.forEach(book => {
+          const photoLink = book.foto.replace(/\\/g, '/').replace('uploads', 'uploads/')
+          book.image = 'http://localhost:3000/' + photoLink
+        })
+
+        this.books = response.data 
+    }).catch((error) => {
+      console.log(error)
+    })
+
+    console.log(this.books)
   }
 }
 </script>
@@ -97,7 +119,7 @@ export default {
 }
 
 .book-image{
-    padding: 5px;
+    padding: 20px;
     width: 200px;
     height: 270px;
     // border: 1px solid rgba(0, 0, 0, 0.18);
