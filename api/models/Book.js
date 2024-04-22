@@ -39,6 +39,14 @@ Book.init({
         allowNull: false,
         defaultValue: true
     },
+    curso:{
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    disciplina: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     idVendedor: {
         type: DataTypes.INTEGER,
         allowNull: false,

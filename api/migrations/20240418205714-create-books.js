@@ -47,6 +47,14 @@ module.exports = {
                 allowNull: false,
                 defaultValue: true
             },
+            curso:{
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            disciplina: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
             idVendedor: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
