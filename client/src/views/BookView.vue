@@ -179,6 +179,7 @@ async mounted() {
             flex-direction: column;
             width: 100%;
             padding: 20px;
+            margin-left: 40px;
             
            
 
@@ -194,7 +195,7 @@ async mounted() {
             h2 {
                     font-size: 30px;
                     font-weight: 400;
-                    margin-bottom: 90px;
+                    margin-bottom: 50px;
                     color: var(--primaryColor);
                     text-align: left;
             }
@@ -206,7 +207,7 @@ async mounted() {
                 width: 100%;
                 justify-content: left;
                 gap: 150px;
-                margin-bottom: 70px;
+                margin-bottom: 50px;
 
                 .detail{
                     display: flex;
@@ -237,9 +238,11 @@ async mounted() {
             display: flex;
             flex-direction: column;
             align-items: center;
+
+            margin-right: 40px;
             
-            width: 1300px;
-            height: 750px;
+            width: 1100px;
+            height: 600px;
             justify-content: center;
             
             border-radius: 50px;
@@ -250,8 +253,9 @@ async mounted() {
 
             img {
                 margin-top: 0px;
-                width: 400px;
-                height: 500px;
+                width: 300px;
+                height: 400px;
+                object-fit: contain;
             }
 
             .livro-anunciante{
