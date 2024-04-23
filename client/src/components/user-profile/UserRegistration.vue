@@ -19,6 +19,7 @@
                       :type="field.type" 
                       :placeholder="field.ref === 'name' ? loggedInUser.name : field.ref === 'email' ? loggedInUser.email : field.ref == 'cellphone' ? loggedInUser.cellphone : field.placeholder"
                       :disabled="field.disable"
+                        v-model="formData[field.ref]"
                       @input="field.input && this[field.input]($event); formatValue($event, field.format)" />
               </div>
           </div>
@@ -54,6 +55,7 @@
 <script>
 import ModalComponent from '@/components/modals/ModalComponent.vue';
 import { mapActions, mapGetters } from 'vuex'
+import { updateUser } from '@/controllers/UpdateUserController';
 
 export default {
   name: 'UserRegistration',
@@ -94,13 +96,19 @@ export default {
                 ref: 'password',
                 label: 'Senha', 
                 type: 'password',
-                placeholder: 'Confirme sua senha antes de alterar',
+                placeholder: 'Para alterar a senha, clique em Alterar',
                 required: true,
                 changeButton: true,
                 disable: true
             }
           ]
         },
+        formData: {
+        name: '',
+        cellphone: '',
+        email: '',
+       },
+       originalData: {},
         passwordData: {
             password: '',
             newPassword: '',
@@ -158,14 +166,63 @@ export default {
         //         position: 'top-right'
         //     });
         // });
-    }
+    },
+    submitForm() {
+          console.log('Enviando dados de atualização:', this.formData);
+      // Converter formData em formato de query string se necessário
+        const payload = new URLSearchParams(this.formData).toString();
+            console.log('Payload no formato de query string:', payload);
+        updateUser(this.loggedInUser.id, this.formData)
+        .then(response => {
+        if (response.data && response.data.success) {
+            this.$toast.open({
+            message: 'Dados atualizados com sucesso!',
+            type: 'success',
+            duration: 5000,
+            position: 'top-right'
+            });
+        // Atualiza originalData para refletir as últimas alterações
+        this.originalData = { ...this.formData };
+
+      } else {
+        // Se a resposta do servidor não for a esperada
+        this.$toast.open({
+          message: 'Atualização falhou. Tente novamente.',
+          type: 'error',
+          duration: 5000,
+          position: 'top-right'
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Erro na atualização:', error);
+      this.$toast.open({
+        message: 'Erro ao atualizar os dados.',
+        type: 'error',
+        duration: 5000,
+        position: 'top-right'
+      });
+    });
+}
+
+
   },
   computed: {
       ...mapGetters(['loggedInUser']),
   },
-  mounted() {
+  async mounted() {
      console.log(this.loggedInUser)
-  }
+     
+     this.formData = {
+        name: this.loggedInUser.name,
+        cellphone: this.loggedInUser.cellphone,
+        email: this.loggedInUser.email
+    };
+    this.originalData = { ...this.formData };
+        
+
+  },
+  
 }
 
 </script>
