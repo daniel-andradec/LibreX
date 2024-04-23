@@ -132,9 +132,9 @@ Desenvolver uma plataforma online voltada para a comunidade universitária, faci
      - Desenvolver a página de detalhes do livro, incluindo layout e elementos de interface. [Carolina]
      - Implementar a lógica no backend para fornecer os detalhes específicos de um livro. [Daniel]
      - Integrar a interface de detalhes do livro com informações provenientes do backend. [Iago]
-
+    
 6. **Execução de Venda**:
-    - Tarefas e Responsáveis:
+   - Tarefas e Responsáveis:
      - Implementar a lógica no backend para execução de uma venda. [Victor]
      - Desenvolver endpoint de API para retornar vendas e compras de um usuário. [Daniel]
      - Criar seção de histórico de compras e vendas do usuário na página de perfil. [Iago]
