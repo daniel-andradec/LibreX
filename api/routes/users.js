@@ -6,6 +6,7 @@ const router = express.Router();
 const upload = require('../config/multerConfig');
 const {loginMiddleware, notLoggedIn} = require('../utils/auth');
 const UsersService = require('../services/usersService');
+const path = require('path')
 
 router.post('/', upload.single('foto'), async (req, res) => {
     try {
@@ -54,8 +55,8 @@ router.get('/:id', async (req, res) => {
 
 router.get('/:id/photo', async (req, res) => {
     try {
-        const path = await UsersService.getPhoto(req.params.id);
-        res.sendFile(path, { root: path.join(__dirname, '..') });
+        const photoPath = await UsersService.getPhoto(req.params.id);
+        res.sendFile(photoPath, { root: path.join(__dirname, '..') });
     } catch (error) {
         res.status(500).send({ message: 'Erro do servidor ao recuperar a foto do usuário!' });
     }
