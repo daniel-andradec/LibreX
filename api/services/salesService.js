@@ -17,6 +17,31 @@ class SaleService{
             throw new NotFoundError('Book not found');
         }
     }
+
+    async findAll(id){
+        //find all sales and purchases from a user, creating a new field to identify if it is a sale or a purchase
+        const sales = await Sale.findAll({
+            where: {
+                idVendedor: id
+            }
+        });
+        const purchases = await Sale.findAll({
+            where: {
+                idComprador: id
+            }
+        });
+
+        sales.forEach(sale => {
+            sale.dataValues.sale = 1; //`type` 1 means sale
+        });
+        purchases.forEach(purchase => {
+            purchase.dataValues.sale = 0; //`type` 2 means purchase
+        });
+
+        const allSales = sales.concat(purchases);
+
+        return allSales;
+    }
 }
 
 module.exports = new SaleService;
