@@ -19,7 +19,11 @@
         <div class="book" v-for="book in books" :key="book.id">
             <img :src="book.image" />
             <div class="name">{{ fixLength(book.titulo) }}</div>
-            <div class="price"> {{ formatValue(book.preco) }}</div>
+           
+            <div v-if="book.preco === 0" class="price">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                </div>
+                <div v-else class="price"> {{ formatValue(book.preco) }}</div>
         </div>
     </div>
 

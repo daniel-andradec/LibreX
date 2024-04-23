@@ -6,19 +6,25 @@
         </div>
     </div>
 
-    <div class="history-item" v-for="(item, ikey) in mockData" :key="ikey">
+    <div class="history-item" v-for="item in transactions" :key="item.id">
         <div class="image">
           <img :src="item.image" alt="book" />
         </div>
-        <p>{{ item.title }}</p>
+        <p>{{ item.name }}</p>
         <p>{{ item.author }}</p>
 
         <div class="type">
-          <div v-if="item.type === 'sale'" class="sale">Venda</div>
-          <div v-else-if="item.type === 'purchase'" class="purchase">Compra</div>            
+          <div v-if="item.sale === 0 " class="sale">Venda</div>
+          <div v-else-if="item.sale === 1 " class="purchase">Compra</div>            
         </div>
-        <p>{{ formatValue(item.price) }}</p>
-        <p>{{ item.date }}</p>
+
+         <div class="price">
+          <div v-if="item.price === 0 "> <i class="fa-solid fa-hand-holding-heart" style="color: black; font-size: 25px;"></i></div>
+          <div v-else class="price"> <p>{{formatValue(item.price)}}</p></div>            
+        </div>
+       
+    
+        <p>{{ item.data }}</p>
     </div>     
     
     <div class="book-list">
@@ -27,30 +33,18 @@
 </template>
 
 <script>
+
+import { mapGetters, mapActions } from 'vuex'
+import { getUserTransactions } from '@/controllers/UserTransactionsController'
+import { getBook } from '@/controllers/BookController'
+
 export default {
   name: 'UserHistory',
   components: {
   },
   data() {
     return {
-      mockData: [
-        {
-          title: 'Introduction to Algorithms',
-          author: 'Thomas H. Cormen',
-          price: 235,
-          image: 'https://m.media-amazon.com/images/I/61Pgdn8Ys-L._AC_UF1000,1000_QL80_.jpg',
-          type: 'sale',
-          date: '15/04/2024'
-        },
-        {
-          title: 'Calculo: Volume 2',
-          author: 'James Stewart',
-          price: 150,
-          image: 'https://m.media-amazon.com/images/I/61oaBUaZwiL._AC_UF1000,1000_QL80_.jpg',
-          type: 'purchase',
-          date: '15/03/2024'
-        }
-      ],
+      
       listFields: [
           {
               display: 'Imagem'
@@ -75,17 +69,49 @@ export default {
               display: 'Data',
               name: 'date'
           }
-      ]
+      ],
+     transactions: []
     }
   },
   methods: {
     formatValue(value) {
-        return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
-    }
+         return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
+    },
+    async augmentTransaction(transaction) {
+      const book = await getBook(transaction.idLivro);
+      if (!book) {
+        console.error('Livro não encontrado para a transação: ', transaction);
+        return; // Se o livro não for encontrado, encerre a função aqui.
+      }
+      console.log(book)
+      transaction.name = book.data.titulo;
+      transaction.author = book.data.autores;
+      transaction.price = book.data.preco;
+      
+        const photoLink = book.data.foto.replace(/\\/g, '/').replace('uploads', 'uploads/');
+        transaction.image = 'http://localhost:3000/' + photoLink;
+      
+  }
   },
   computed: {
+    ...mapGetters(['loggedInUser']),
   },
-  mounted() {
+  async mounted() {
+  console.log(this.loggedInUser?.id);
+
+  await getUserTransactions(this.loggedInUser.id).then(async (response) => {
+    const transactions = response.data;
+    console.log(transactions);
+
+    for (let transaction of transactions) {
+      const date = new Date(transaction.createdAt);
+      transaction.data = date.toLocaleDateString('pt-BR');
+      await this.augmentTransaction(transaction); // Adiciona detalhes do livro à transação
+    }
+    
+    this.transactions = transactions;
+    console.log(this.transactions);
+  });
   }
 }
 </script>
@@ -142,6 +168,8 @@ export default {
     p {
         font-size: 16px;
         font-weight: 00;
+        color: black;
+
     }
 
     .type {
@@ -161,6 +189,20 @@ export default {
         padding: 5px;
         border-radius: 5px;
       }
+
+      .price{
+        color: black;
+      }
+
+      
+    .user-history .history-item .type i {
+    color: black; /* Define a cor do ícone */
+    font-size: 20px; /* Define o tamanho do ícone */
+    }
+    .user-history .history-item .type i {
+    color: black !important; /* Assegura que a cor será aplicada */
+    font-size: 20px !important; /* Assegura que o tamanho será aplicado */
+}
     }
   }
 }

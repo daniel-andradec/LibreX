@@ -18,7 +18,7 @@
             <div class="subject">{{ book.disciplina}}</div>
           
             </div>
-              <div v-if="book.price === 0" class="price">
+              <div v-if="book.preco === 0" class="price">
                 <i class="fa-solid fa-hand-holding-heart"></i>
                 </div>
                 <div v-else class="price">R$ {{ book.preco.toFixed(2) }}</div>
@@ -248,6 +248,6 @@ export default {
 
 i{
     color: var(--primaryColor);
-    font-size: 35px;
+    font-size: 33px;
 }
 </style>
