@@ -40,9 +40,14 @@
                     <p class="label">Preço</p><p> R$ {{ book.preco }}</p>
                 </div>
             </div>
+
+            <div class="buy">
+              Deseja obter este livro?
+              <span @click="confirmationModalOpen = true">
+                Entre em contato com o anunciante!
+              </span>
+            </div>
         </div>
-
-
 
         <div class="book-image">
 
@@ -56,7 +61,7 @@
                     <img class="dono" :src="vendor.image" alt="Imagem do anunciante" />
                     <p class="anunciante-nome">{{ vendor.nome }}</p>
                 </div>
-                
+
             </div>
 
 
@@ -64,6 +69,20 @@
 
          
       </div>
+
+      <ModalComponent :modalOpen="confirmationModalOpen" @closeModal="confirmationModalOpen = false">
+          <div class="buy-book-modal">
+              <i class="fa-solid fa-exclamation-circle"></i>
+              <h2>Confirma a aquisição deste livro?</h2>
+              <div class="buy-buttons">
+                  <button class="btn btn-primary" @click="confirmationModalOpen = false">Cancelar</button>
+                  <button class="btn btn-confirm" @click="buyBook">
+                      Confirmar
+                  </button>
+              </div>
+          </div>
+      </ModalComponent>
+
     </div>
 </template>
 
@@ -75,40 +94,54 @@ import userImage from '@/assets/images/user.svg';
 import { getBook } from '@/controllers/BookController';
 import { getUser} from '@/controllers/UserController';
 import { getVendor} from '@/controllers/BookController';
+import userDefault from '@/assets/images/user-default-image.png';
+import ModalComponent from '@/components/modals/ModalComponent.vue';
+import { performSale } from '@/controllers/SaleController';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'BookView',
   components: {
-    MainHeader
+    MainHeader,
+    ModalComponent
   },
   data() {
     return {
-    //   book: {
-    //     title: 'Matemática Compreensão e práticaaaaaaaaaaa',
-    //     authors: ['Énio Silveira', 'Cláudio Marques'],
-    //     course: 'Matemática',
-    //     subject: 'Introdução à Matemática',
-    //     condition: 'Bom',
-    //     availableFor: 'Venda',
-    //     price: 70.00,
-    //     imageUrl: 'link-para-imagem-do-livro.jpg',
-    //   },
-    //   donodolivro: {
-    //     nome: "Balchandra"
-
-    //   },
-    //   livroExemplo,
-    //   userImage
-    book: {},
-    vendor: {},
-
+      book: {},
+      vendor: {},
+      userDefault,
+      confirmationModalOpen: false
     };
   },
+  methods: {
+    async buyBook () {
+      const bookId = this.book.id;
+      const buyerId = this.loggedInUser.id;
+      const vendorId = this.book.idVendedor;
 
-async mounted() {
-    // this.getBook();
-    console.log(this.$route.params.bookId);
-
+      await performSale(bookId, buyerId, vendorId).then((res) => {
+        if (res.status === 201) {
+          this.$toast.open({
+              message: 'Compra realizada com sucesso!',
+              type: 'success',
+              duration: 4000,
+              position: 'top-right'
+          });
+          this.$router.push('/');
+          this.confirmationModalOpen = false;
+        }
+      }).catch((error) => {
+        console.log(error)
+        this.$toast.open({
+            message: 'Erro ao realizar a compra. Tente novamente.',
+            type: 'error',
+            duration: 5000,
+            position: 'top-right'
+        });
+      });
+    }
+  },
+  async mounted() {
     const bookId = this.$route.params.bookId;
 
     await getBook(bookId).then((response) => {
@@ -118,29 +151,29 @@ async mounted() {
         book.image = 'http://localhost:3000/' + photoLink
         
         this.book = book;
-      console.log(book)
       
     }).catch((error) => {
       console.log(error)
     })
 
-    console.log("oi", this.book.idVendedor);
-
     await getVendor(this.book.idVendedor).then((response) => {
       const vendor = response.data;
 
-      const photoLink = vendor.foto.replace(/\\/g, '/').replace('uploads', 'uploads/')
+      if (!vendor.foto) {
+        vendor.image = userDefault
+      }
+      else {
+        const photoLink = vendor.foto.replace(/\\/g, '/').replace('uploads', 'uploads/')
         vendor.image = 'http://localhost:3000/' + photoLink
+      }
       this.vendor = vendor;
-      console.log(vendor)
     }).catch((error) => {
       console.log(error)
     })
-
-
-
   },
-  
+  computed: {
+    ...mapGetters(['loggedInUser'])
+  }
 };
 </script>
 
@@ -231,6 +264,20 @@ async mounted() {
                 }
 
             }
+
+            .buy {
+                margin-top: 50px;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+
+                span {
+                    color: var(--primaryColor);
+                    font-weight: 600;
+                    margin-left: 10px;
+                    cursor: pointer;
+                }
+            }
         }
 
         .book-image{
@@ -299,6 +346,55 @@ async mounted() {
                 }
 
             }
+        }
+    }
+
+    .buy-book-modal {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+
+        h2 {
+            font-size: 22px;
+            font-weight: 500;
+            text-align: center;
+            max-width: 450px;
+            word-break: break-word;
+        }
+
+        i {
+            color: #3b3b3b;
+        }
+
+        button {
+            width: 100px;
+            height: 40px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            color: #232323;
+        }
+
+        .btn-confirm {
+            background-color: var(--primaryColor);
+            color: white;
+        }
+
+        .buy-buttons {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
         }
     }
 }    

@@ -28,4 +28,9 @@ const register = async (nome, email, celular, senha) => {
     return response
 }
 
-export { login, getUser, logout, updatePassword, register }
+const updatePhoto = async (id, formData) => {
+    const response = await makeRequest('PUT', `/users/${id}/photo`, formData, true)
+    return response
+}
+
+export { login, getUser, logout, updatePassword, register, updatePhoto }

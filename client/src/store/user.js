@@ -12,6 +12,9 @@ export default {
       setUser(state, payload) {
           state.user = payload
       },
+      setUserPhoto(state, payload) {
+          state.user.photo = payload
+      },
       doLogout(state) {
           state.user = {
               id: null,
@@ -27,6 +30,9 @@ export default {
   actions: { // methods to call mutations
       setUser({ commit }, payload) {
           commit('setUser', payload)
+      },
+      setUserPhoto({ commit }, payload) {
+          commit('setUserPhoto', payload)
       },
       doLogout({ commit }) {
           commit('doLogout')

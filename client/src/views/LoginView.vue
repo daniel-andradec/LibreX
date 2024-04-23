@@ -92,10 +92,10 @@ export default {
   },
   methods: {
       ...mapActions(['setUser']),
-      async login () {
+      async login (emailParam = null, passwordParam = null) {
         // log inputs
-        const email = this.$refs.email.value
-        const password = this.$refs.password.value
+        const email = emailParam || this.$refs.email.value 
+        const password = passwordParam || this.$refs.password.value 
 
         if (email === '' || password === '') {
             this.$toast.open({
@@ -162,12 +162,14 @@ export default {
         await register(name, email, cellphone, password).then(async (res) => {
             if (res.status === 201) {
                 this.$toast.open({
-                    message: 'Usuário cadastrado com sucesso! Faça seu login.',
+                    message: 'Usuário cadastrado com sucesso!.',
                     type: 'success',
-                    duration: 4000,
+                    duration: 3000,
                     position: 'top-right'
                 });
                 this.registerModalOpen = false
+
+                this.login(email, password)
             }
         }).catch(async (err) => {
             console.log(err)

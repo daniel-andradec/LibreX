@@ -33,9 +33,9 @@
               <div>
                   <label for="quantity">Estado de Conservação <span>*</span></label>
                   <select name="condition" id="condition" required ref="condition">
-                      <option value="1">Bom</option>
-                      <option value="2">Médio</option>
-                      <option value="3">Ruim</option>
+                      <option value="1">Excelente</option>
+                      <option value="2">Bom</option>
+                      <option value="3">Razoável</option>
                   </select>
               </div>
           </div>

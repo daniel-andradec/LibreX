@@ -91,7 +91,6 @@ export default {
   mounted() {
     // user photo is smth like uploads\\1713725475470.webp in api folder
     // need only //1713725475470.webp
-    console.log(this.loggedInUser)
     if (!this.loggedInUser?.photo) {
       this.userPhoto = userDefault
       return

@@ -5,7 +5,12 @@
     </header>
     
     <div class="user-info">
-      <img class="user-image" :src="userImage" alt="User image" />
+      <div class="image-container">
+        <img class="user-image" :src="userImage" alt="User image" />
+        <div class="change-image" @click="changeImageModalOpen = true">
+          <i class="fa fa-edit"></i>
+        </div>
+      </div>
       <h1>{{ userName }}</h1>
     </div>
 
@@ -30,6 +35,28 @@
     <div v-if="selectedOption === 'registration'">
       <UserRegistration />
     </div>
+
+    <ModalComponent :modalOpen="changeImageModalOpen" @closeModal="changeImageModalOpen = false">
+        <div class="buy-book-modal">
+          <div class="image-input">
+              <label for="inputfile" class="add-image-label" v-if="!imagePreviewUrl">
+                  Adicionar imagem
+              </label>
+              <input type="file" id="inputfile" @change="handleFileUpload" class="file-input" ref="inputfile" >
+              <div class="image-preview" v-if="imagePreviewUrl" @click="triggerFileInput">
+                  <img :src="imagePreviewUrl" alt="Preview da imagem">
+                  <h2>Alterar imagem</h2>
+              </div>
+          </div>
+
+          <div class="b-button">
+            <button class="btn btn-confirm" @click="updateImage">
+                Salvar
+            </button>
+          </div>
+        </div>
+    </ModalComponent>
+
   </div>
 </template>
 
@@ -39,14 +66,17 @@ import userDefault from '@/assets/images/user-default-image.png'
 import UserBooks from '@/components/user-profile/UserBooks.vue'
 import UserHistory from '@/components/user-profile/UserHistory.vue'
 import UserRegistration from '@/components/user-profile/UserRegistration.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import ModalComponent from '@/components/modals/ModalComponent.vue'
+import { updatePhoto } from '@/controllers/UserController'
 
 export default {
   name: 'ProfileView',
   components: {
     UserBooks,
     UserHistory,
-    UserRegistration
+    UserRegistration,
+    ModalComponent
   },
   data() {
     return {
@@ -54,12 +84,91 @@ export default {
       userDefault,
       userImage: '',
       userName: 'Usuário',
-      selectedOption: 'books'
+      selectedOption: 'books',
+      changeImageModalOpen: false,
+      imagePreviewUrl: null,
+      imgFile: null,
+      fileChanged: false
     }
   },
   methods: {
+    ...mapActions(['setUserPhoto']),
     selectOption(option) {
       this.selectedOption = option
+    },
+    handleFileUpload(event) {
+        const file = event.target.files[0];
+
+        // verificar se imagem é jpg ou png
+        if (file?.type !== 'image/jpeg' && file?.type !== 'image/png') {
+            this.$toast.open({
+                message: 'Formato de imagem inválido. A imagem deve ser JPG ou PNG.',
+                type: 'warning',
+                position: 'top-right',
+                duration: 5000
+            })
+            return
+        }
+
+        if (file) {
+            this.fileChanged = true
+            const formData = new FormData()
+            formData.append('photo', file)
+            this.imagePreviewUrl = URL.createObjectURL(file);
+            this.imgFile = file
+        }
+    },
+    triggerFileInput() {
+        this.$refs.inputfile.click()
+    },
+    async updateImage() {
+        if (!this.fileChanged) {
+            this.$toast.open({
+                message: 'Nenhuma imagem foi selecionada.',
+                type: 'warning',
+                position: 'top-right',
+                duration: 5000
+            })
+            return
+        }
+        
+        const userId = this.loggedInUser?.id
+        const formData = new FormData()
+        formData.append('foto', this.imgFile)
+
+        await updatePhoto(userId, formData).then((res) => {
+            console.log(res)
+            const userPhoto = res.data?.user?.foto
+
+            if (userPhoto) {
+              const photoLink = userPhoto.replace(/\\/g, '/').replace('uploads', 'uploads/')
+              this.userImage = `http://localhost:3000/${photoLink}`
+              this.setUserPhoto(userPhoto)
+              this.$toast.open({
+                  message: 'Imagem atualizada com sucesso.',
+                  type: 'success',
+                  position: 'top-right',
+                  duration: 5000
+              })
+              this.changeImageModalOpen = false
+              this.fileChanged = false
+            } else {
+              this.$toast.open({
+                  message: 'Erro ao atualizar imagem.',
+                  type: 'error',
+                  position: 'top-right',
+                  duration: 5000
+              })
+            }
+        }).catch((err) => {
+            console.log(err)
+            this.$toast.open({
+                message: 'Erro ao atualizar imagem.',
+                type: 'error',
+                position: 'top-right',
+                duration: 5000
+            })
+        })
     }
   },
   computed: {
@@ -104,13 +213,32 @@ export default {
     align-items: center;
     justify-content: center;
 
-    .user-image {
+    .image-container {
+      position: relative;
       width: 100px;
-      height: 70px;
-      object-fit: contain;
+      height: 100px;
       margin-bottom: 5px;
-    }
+      
+      .user-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 50%;
+      }
 
+      .change-image {
+        position: absolute;
+        top: 0;
+        right: 0; 
+        cursor: pointer; 
+
+        i {
+          font-size: 20px;
+          color: var(--primaryColor);
+        }
+      }
+    }
+    
     h1 {
       font-size: 22px;
       font-weight: 500;
@@ -146,6 +274,84 @@ export default {
     height: 1px;
     background-color: #ccc;
     margin-left: 40px;
+  }
+
+  .buy-book-modal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+
+      .image-input {
+          .file-input {
+              display: none;
+          }
+
+          .add-image-label {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              width: 150px;
+              height: 150px;
+              border: 2px dashed #828282;
+              border-radius: 5px;
+              cursor: pointer;
+              color: #828282;
+              font-size: 16px;
+              font-weight: bold;
+              text-align: center;
+          }
+
+          .image-preview {
+              width: 180px;
+              height: 170px;
+              border-radius: 5px;
+              padding: 5px;
+              font-size: 14px;
+              font-weight: 500;
+              color: #232323;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+
+              img {
+                  width: 100%;
+                  height: 100%;
+                  max-width: 150px;
+                  max-height: 130px;
+                  object-fit: contain;
+                  cursor: pointer;
+              }
+
+              h2 {
+                  font-size: 12px;
+                  font-weight: 500;
+                  cursor: pointer;
+              }
+          }
+      }
+
+      .b-button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        
+        .btn-confirm {
+            width: 80px;
+            height: 30px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer; 
+            // background-color: var(--primaryColor);
+            color: var(--primaryColor);
+            border: 1px solid var(--primaryColor);
+        }
+      }
   }
 }
 </style>

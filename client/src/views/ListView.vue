@@ -4,34 +4,41 @@
       <MainHeader />
     </header>
            
- <div class="book-list" v-if="books.length > 0">
-    <div class="list-item" v-for="book in filteredBooks" :key="book.id" @click="goToBook(book.id)">
-    <div class="book-container">
-      <img :src="book.image" class="book-image" alt="Cover image" />
+    <div class="wrapper" v-if="books.length > 0">
+      <div class="book-list">
+      <div class="list-item" v-for="book in filteredBooks" :key="book.id" @click="goToBook(book.id)">
+        <div class="book-container">
+          <img :src="book.image" class="book-image" alt="Cover image" />
 
-      <div class="books-info">
-        <h2 class="title">{{ book.titulo }}</h2>
-         <div class="authors">{{ book.autores }}</div>
-         <div class="school-info">
-        <div class="major">{{ book.curso }}</div>
-        <div class="subject">{{ book.disciplina}}</div>
-       
-         </div>
-          <div v-if="book.price === 0" class="price">
-            <i class="fa-solid fa-hand-holding-heart"></i>
+          <div class="books-info">
+            <h2 class="title">{{ book.titulo }}</h2>
+            <div class="authors">{{ book.autores }}</div>
+            <div class="school-info">
+            <div class="major">{{ book.curso }}</div>
+            <div class="subject">{{ book.disciplina}}</div>
+          
             </div>
-            <div v-else class="price">R$ {{ book.preco.toFixed(2) }}</div>
+              <div v-if="book.price === 0" class="price">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                </div>
+                <div v-else class="price">R$ {{ book.preco.toFixed(2) }}</div>
 
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="not-found" v-else>
-  <h2>Nenhum livro encontrado :(</h2>
-  <span @click="this.$router.push('/')">Voltar à página inicial</span>
-</div>
-  </div>
+    <div class="search">
+        <input type="text" placeholder="Buscar Livro" v-model="searchText" @input="searchProduct()"/>
+        <i class="fa fa-search icon" @click="searchProduct()"></i>
+    </div>
+    </div>
+
+    <div class="not-found" v-else>
+      <h2>Nenhum livro encontrado :(</h2>
+      <span @click="this.$router.push('/')">Voltar à página inicial</span>
+    </div>
+</div>  
 </template>
 
 <script>
@@ -111,18 +118,56 @@ export default {
 </script>
 
 <style lang="less">
-.home-view {
+.list-view {
   header {
-    margin-bottom: 110px;
+    margin-bottom: 80px;
   }
 }
 
-  .book-list {
+.wrapper {
+  display: flex;
+  justify-content: center;
+
+  .search {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        border-radius: 5px;
+        box-sizing: border-box;
+        border: 1px solid var(--secondaryColor);
+        padding: 10px 10px;
+        position: relative;
+        margin-top: 62px;
+        margin-right: 10px;
+
+        //sizing
+        width: 300px;
+        height: 40px;
+        
+        input {
+            border: none;
+            outline: none;
+            background-color: transparent;
+            font-size: 18px;
+            font-family: Gellix;
+            width: 100%;
+            padding-right: 25px;
+        }
+
+        i {
+            font-size: 20px;
+            position: absolute;
+            right: 10px;
+            color: gray;
+        }
+    }   
+}
+
+
+.book-list {
   display: flex;
   flex-direction: column;
-  margin-top: 70px;
   padding: 60px;
-  padding-right: 400px;
   gap: 30px;
 }
 
@@ -130,13 +175,14 @@ export default {
     padding: 20px;
     width: 200px;
     height: 270px;
+    object-fit: contain;
     // border: 1px solid rgba(0, 0, 0, 0.18);
-    
 }
 .list-item {
   display: flex;
   align-items: center;
   height: 270px;
+  min-width: 900px;
   border: 1px solid rgba(0, 0, 0, 0.18);
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
@@ -161,13 +207,12 @@ export default {
   margin-top:  15px;
   margin-bottom: 15px;
   padding-bottom: 10px;
-
 }
 
 .title {
   font-size: 27px;
-  font-weight: bold;
-  font-family: "Arial";
+  font-weight: 600;
+  font-family: Gellix;
 }
 
 .authors{
