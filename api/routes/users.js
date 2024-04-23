@@ -60,16 +60,6 @@ router.put('/updateSenha', async (req, res, next) => {
     }
 } );
 
-router.get('/', async (req, res) => {
-    try {
-        const users = await User.findAll();
-        res.send(users);
-    } catch (error) {
-        console.log(error)
-        res.status(500).send(error);
-    }
-});
-
 router.get('/:id', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
@@ -84,45 +74,45 @@ router.get('/:id', async (req, res) => {
 });
 
 // GET /users/:id/sales - Pegar todas as vendas de um usuário
-router.get('/:id/sales', async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const sales = await Sale.findAll({
-            where: {
-                idVendedor: userId
-            }
-        });
+// router.get('/:id/sales', async (req, res) => {
+//     try {
+//         const userId = req.params.id;
+//         const sales = await Sale.findAll({
+//             where: {
+//                 idVendedor: userId
+//             }
+//         });
 
-        if (sales.length === 0) {
-            return res.status(404).send({ message: 'No sales found for this user' });
-        }
+//         if (sales.length === 0) {
+//             return res.status(404).send({ message: 'No sales found for this user' });
+//         }
 
-        res.send(sales);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ message: 'Server error while retrieving sales' });
-    }
-});
+//         res.send(sales);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).send({ message: 'Server error while retrieving sales' });
+//     }
+// });
 
-router.get('/:id/purchases', async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const purchases = await Sale.findAll({
-            where: {
-                idComprador: userId
-            }
-        });
+// router.get('/:id/purchases', async (req, res) => {
+//     try {
+//         const userId = req.params.id;
+//         const purchases = await Sale.findAll({
+//             where: {
+//                 idComprador: userId
+//             }
+//         });
 
-        if (purchases.length === 0) {
-            return res.status(404).send({ message: 'No purchases found for this user' });
-        }
+//         if (purchases.length === 0) {
+//             return res.status(404).send({ message: 'No purchases found for this user' });
+//         }
 
-        res.send(purchases);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ message: 'Server error while retrieving purchases' });
-    }
-});
+//         res.send(purchases);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).send({ message: 'Server error while retrieving purchases' });
+//     }
+// });
 
 router.get('/:id/photo', async (req, res) => {
     try {
@@ -199,20 +189,6 @@ router.put('/:id/photo', upload.single('foto'), async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: 'Server error while updating photo.' });
-    }
-});
-
-router.delete('/:id', async (req, res) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        if (user) {
-            await user.destroy();
-            res.send({ message: 'User deleted' });
-        } else {
-            res.status(404).send({ error: 'User not found' });
-        }
-    } catch (error) {
-        res.status(500).send(error);
     }
 });
 
