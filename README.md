@@ -97,3 +97,45 @@ Desenvolver uma plataforma online voltada para a comunidade universitária, faci
      - Desenvolver a página de detalhes do livro, incluindo layout e elementos de interface. [Carolina]
      - Implementar a lógica no backend para fornecer os detalhes específicos de um livro. [Victor]
      - Integrar a interface de detalhes do livro com informações provenientes do backend. [Iago]
+
+## Versão Revisada do Backlog da Sprint
+1. **Cadastro de Usuário**:
+   - Tarefas e Responsáveis:
+     - Implementar lógica de cadastro no servidor. [Victor]
+     - Configurar validação dos dados de cadastro no backend. [Victor]
+     - Desenvolver a página de cadastro no frontend. [Iago]
+     - Implementar validação de formulário no lado do cliente. [Iago]
+
+2. **Autenticação de Usuário**:
+   - Tarefas e Responsáveis:
+     - Configurar o sistema de autenticação e sessão no backend. [Daniel]
+     - Implementar funcionalidades de login e logout no servidor. [Daniel]
+     - Integrar autenticação backend com a interface de usuário. [Iago]
+     - Criar componentes de frontend para login e logout. [Iago]
+
+3. **Publicação de Anúncios de Livros**:
+   - Tarefas e Responsáveis:
+     - Desenvolver a funcionalidade de adicionar novos anúncios no backend. [Victor]
+     - Implementar validação de dados do anúncio no servidor. [Victor]
+     - Criar a interface de usuário para adicionar novos anúncios. [Iago]
+     - Integrar a interface de publicação de anúncios com o backend. [Carolina]
+
+4. **Listagem de Livros**:
+   - Tarefas e Responsáveis:
+     - Implementar a recuperação de anúncios de livros do banco de dados. [Daniel]
+     - Desenvolver endpoints de API para listagem de livros. [Victor]
+     - Criar a visualização de listagem de livros no frontend. [Carolina]
+     - Integrar a listagem de livros com os dados fornecidos pelo backend. [Carolina]
+
+5. **Visualização de Detalhes do Livro**:
+   - Tarefas e Responsáveis:
+     - Desenvolver a página de detalhes do livro, incluindo layout e elementos de interface. [Carolina]
+     - Implementar a lógica no backend para fornecer os detalhes específicos de um livro. [Daniel]
+     - Integrar a interface de detalhes do livro com informações provenientes do backend. [Iago]
+    
+6. **Execução de Venda**:
+   - Tarefas e Responsáveis:
+     - Implementar a lógica no backend para execução de uma venda. [Victor]
+     - Desenvolver endpoint de API para retornar vendas e compras de um usuário. [Daniel]
+     - Criar seção de histórico de compras e vendas do usuário na página de perfil. [Iago]
+     - Integrar a interface de histórico de compras e vendas do usuário com o backend. [Carolina]
