@@ -1,68 +1,43 @@
 const express = require('express');
-const Book = require('../models/Book');
 const router = express.Router();
 const upload = require('../config/multerConfig');
-const path = require('path')
+const path = require('path');
+const BooksService = require('../services/booksService');
 
-// POST /books - Criar um novo livro
 router.post('/', upload.single('foto'), async (req, res) => {
     try {
-        const { title, author, ...otherDetails } = req.body;
         const fotoPath = req.file ? req.file.path : null;
-        const book = await Book.create({
-            title,
-            author,
-            foto: fotoPath,
-            ...otherDetails
-        });
-        res.status(201).send(book);
+        const book = await BooksService.create(req.body, fotoPath);
+        res.status(200).send(book);
     } catch (error) {
         res.status(400).send(error);
     }
 });
 
-// GET /books - Listar todos os livros
 router.get('/', async (req, res) => {
     try {
-        const books = await Book.findAll({
-            where: { available: true }
-        });
+        const books = await BooksService.getAllBooks();
         res.send(books);
     } catch (error) {
-        res.status(500).send(error);
+        res.status(400).send(error);
     }
 });
 
-// GET /books/:id - Obter um livro específico
 router.get('/:id', async (req, res) => {
     try {
-        const book = await Book.findByPk(req.params.id);
-        if (book) {
-            res.send(book);
-        } else {
-            res.status(404).send({ message: 'Book not found' });
-        }
+        const book = await BooksService.getBookById(req.params.id);
+        res.send(book);
     } catch (error) {
-        res.status(500).send(error);
+        res.status(400).send(error);
     }
 });
 
-// GET /books/:id/photo - Obter a foto de um livro específico
 router.get('/:id/photo', async (req, res) => {
     try {
-        const book = await Book.findByPk(req.params.id);
-        if (book && book.foto) {
-            // Ajustando para usar um caminho simples diretamente para 'uploads'
-            const fullPath = path.join(book.foto);
-            res.sendFile(fullPath, { root: path.join(__dirname, '..') });
-        } else if (book && !book.foto) {
-            res.status(404).send({ message: 'No photo available for this book.' });
-        } else {
-            res.status(404).send({ message: 'Book not found.' });
-        }
+        const fullPath = await BooksService.getPhoto(req.params.id);
+        res.sendFile(fullPath, { root: path.join(__dirname, '..') });
     } catch (error) {
-        res.status(500).send({ message: 'Server error while retrieving photo.' });
-        console.log(error)
+        res.status(400).send({ message: 'Erro no servidor ao buscar a foto do livro!' });
     }
 });
 
