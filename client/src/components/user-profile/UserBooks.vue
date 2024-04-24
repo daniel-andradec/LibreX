@@ -4,8 +4,8 @@
         <div class="user-books-options">
             <div class="left">
                   <div class="search">
-                      <input type="text" placeholder="Buscar Livro" v-model="searchText" @input="searchProduct()"/>
-                      <i class="fa fa-search icon" @click="searchProduct()"></i>
+                      <input type="text" placeholder="Buscar Livro" v-model="searchText" @input="searchBook()"/>
+                      <i class="fa fa-search icon" @click="searchBook()"></i>
                   </div>
                 
             </div>
@@ -16,7 +16,7 @@
     </div>
     
     <div class="book-list-profile" v-if="books.length > 0">
-        <div class="book" v-for="book in books" :key="book.id">
+        <div class="book" v-for="book in filteredBooks" :key="book.id">
             <img :src="book.image" />
             <div class="name">{{ fixLength(book.titulo) }}</div>
            
@@ -50,7 +50,7 @@ export default {
       searchText: '',
       bookModalOpen: false,
       books: [],
-      booksCopy: []
+      filteredBooks: [],
     }
   },
   methods: {
@@ -76,10 +76,25 @@ export default {
         })
 
         this.books = books
-        // this.booksCopy = response.data
+        this.filteredBooks = books
         console.log(response)
       })
-    }
+    },
+    normalizeString(string) {
+      return string.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    },
+    searchBook() {
+      if (this.searchText === '') {
+        this.filteredBooks = this.books
+      } else {
+        this.filteredBooks = this.books.filter(book => {
+          return this.normalizeString(book.titulo).toLowerCase().includes(this.normalizeString(this.searchText).toLowerCase()) || 
+          this.normalizeString(book.autores).toLowerCase().includes(this.normalizeString(this.searchText).toLowerCase()) ||
+          this.normalizeString(book.curso).toLowerCase().includes(this.normalizeString(this.searchText).toLowerCase()) ||
+          this.normalizeString(book.disciplina).toLowerCase().includes(this.normalizeString(this.searchText).toLowerCase())
+        })
+      }
+    },
   },
   computed: {
     ...mapGetters(['loggedInUser']),
@@ -97,7 +112,7 @@ export default {
         })
 
         this.books = books
-        // this.booksCopy = response.data
+        this.filteredBooks = books
         console.log(response)
       })
     }

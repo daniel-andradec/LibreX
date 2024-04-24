@@ -11,7 +11,7 @@
           <i class="fa fa-edit"></i>
         </div>
       </div>
-      <h1>{{ userName }}</h1>
+      <h1>{{ loggedInUser?.name }}</h1>
     </div>
 
     <div class="profile-options">
@@ -183,6 +183,13 @@ export default {
       this.userImage = `http://localhost:3000/${photoLink}`
     }
     this.userName = this.loggedInUser?.name
+  },
+  watch: {
+    changeImageModalOpen: function (val) {
+      if (!val) {
+        this.imagePreviewUrl = null
+      }
+    }
   }
 }
 </script>

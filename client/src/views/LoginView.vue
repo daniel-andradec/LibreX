@@ -46,7 +46,7 @@
                         <input id="emailReg" type="email" placeholder="E-mail" ref="emailReg">
 
                         <label for="cellphoneReg">Celular</label>
-                        <input id="cellphoneReg" type="text" placeholder="Celular" ref="cellphoneReg">
+                        <input id="cellphoneReg" type="text" placeholder="Celular" ref="cellphoneReg" v-maska data-maska="(##) #####-####">
 
                         <label for="passwordReg">Senha </label>
                         <input id="passwordReg" type="password" placeholder="Senha" ref="passwordReg">
@@ -69,11 +69,15 @@ import logo from '@/assets/images/logo.png'
 import imgLogin from '@/assets/images/login_book.png'
 import icon from '@/assets/images/icon.png'
 import { login, logout, register } from '@/controllers/UserController'
+import { vMaska } from 'maska'
 
 export default {
   name: 'LoginView',
   components: {
       ModalComponent
+  },
+  directives: {
+      maska: vMaska
   },
   data() {
       return {
@@ -160,7 +164,7 @@ export default {
         }
 
         await register(name, email, cellphone, password).then(async (res) => {
-            if (res.status === 201) {
+            if (res.status === 200) {
                 this.$toast.open({
                     message: 'Usuário cadastrado com sucesso!',
                     type: 'success',

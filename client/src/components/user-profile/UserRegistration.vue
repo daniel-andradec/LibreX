@@ -15,7 +15,7 @@
                     <label for="cellphone" class="required">Celular</label>
                 </div>
 
-                <input id="cellphone" type="tel" :placeholder="loggedInUser.cellphone" ref="cellphone" />
+                <input id="cellphone" type="tel" :placeholder="loggedInUser.cellphone" ref="cellphone" v-maska data-maska="(##) #####-####" />
               </div>
           </div>
       </div>
@@ -73,11 +73,15 @@
 import ModalComponent from '@/components/modals/ModalComponent.vue';
 import { mapActions, mapGetters } from 'vuex'
 import { updateUser, updatePassword } from '@/controllers/UpdateUserController';
+import { vMaska } from 'maska';
 
 export default {
   name: 'UserRegistration',
   components: {
     ModalComponent
+  },
+  directives: {
+    maska: vMaska
   },
   data() {
     return {

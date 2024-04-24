@@ -29,12 +29,16 @@
     </div>
 
     <div class="search" v-if="books.length > 0">
-        <input type="text" placeholder="Buscar Livro" v-model="searchText" @input="searchProduct()"/>
-        <i class="fa fa-search icon" @click="searchProduct()"></i>
+        <input type="text" placeholder="Buscar Livro" v-model="searchText" @input="searchBook()"/>
+        <i class="fa fa-search icon" @click="searchBook()"></i>
     </div>
     </div>
 
-    <div class="not-found" v-else>
+    <div class="not-found" v-if="filteredBooks.length === 0">
+      <h2>Nenhum livro encontrado :(</h2>
+    </div>
+
+    <div class="not-found" v-else-if="books.length === 0">
       <h2>Nenhum livro disponível :(</h2>
     </div>
 </div>  
@@ -55,43 +59,32 @@ export default {
   }, 
   data() {
     return {
-    //    books: [
-    //   {
-    //     id: 1,
-    //     title: 'Matemática Compreensão e Prática',
-    //     authors: 'Énio Silveira, Cláudio Marques',
-    //     major: 'Matemática',
-    //     subject: 'Introdução a Matemática',
-    //     price: 70.00,
-    //     cover: livroExemplo 
-    //   },
-    //   {
-    //     id: 2,
-    //     title: 'Matemática Compreensão e Prática',
-    //     authors: 'Énio Silveira, Cláudio Marques',
-    //     major: 'Matemática',
-    //     subject: 'Introdução a Matemática',
-    //     price: 0,
-    //     cover: livroExemplo 
-       
-    //   }
-      
-    // ]
-    books:[]
+      books:[],
+      filteredBooks: []
     }
   },
   computed: {
-      ...mapGetters(['loggedInUser']),
-
-    filteredBooks() {
-    return this.books.filter(book => book.idVendedor !== this.loggedInUser.id);
-  }
+      ...mapGetters(['loggedInUser'])
   },
   methods: {
     goToBook(id) {
       this.$router.push(`/book/${id}`)
+    },
+    normalizeString(string) {
+      return string.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    },
+    searchBook() {
+      if (this.searchText === '') {
+        this.filteredBooks = this.books
+      } else {
+        this.filteredBooks = this.books.filter(book => {
+          return this.normalizeString(book.titulo).toLowerCase().includes(this.normalizeString(this.searchText).toLowerCase()) || 
+          this.normalizeString(book.autores).toLowerCase().includes(this.normalizeString(this.searchText).toLowerCase()) ||
+          this.normalizeString(book.curso).toLowerCase().includes(this.normalizeString(this.searchText).toLowerCase()) ||
+          this.normalizeString(book.disciplina).toLowerCase().includes(this.normalizeString(this.searchText).toLowerCase())
+        })
+      }
     }
-   
   },
   
   async mounted() {
@@ -110,6 +103,7 @@ export default {
         books = books.filter(book => book.idVendedor !== this.loggedInUser.id);
 
         this.books = books
+        this.filteredBooks = books
     }).catch((error) => {
       console.log(error)
     })
@@ -122,13 +116,14 @@ export default {
 <style lang="less">
 .list-view {
   header {
-    margin-bottom: 80px;
+    margin-bottom: 120px;
   }
 }
 
 .wrapper {
   display: flex;
   justify-content: center;
+  gap: 20px;
 
   .search {
         display: flex;
@@ -139,8 +134,6 @@ export default {
         border: 1px solid var(--secondaryColor);
         padding: 10px 10px;
         position: relative;
-        margin-top: 62px;
-        margin-right: 10px;
 
         //sizing
         width: 300px;
@@ -169,8 +162,8 @@ export default {
 .book-list {
   display: flex;
   flex-direction: column;
-  padding: 60px;
   gap: 30px;
+  margin-bottom: 50px;
 }
 
 .book-image{
@@ -208,7 +201,7 @@ export default {
 //   border: 1px solid rgba(0, 0, 0, 0.18);
   margin-top:  15px;
   margin-bottom: 15px;
-  padding-bottom: 10px;
+  padding: 10px;
 }
 
 .title {
