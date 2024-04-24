@@ -5,4 +5,8 @@ const updateUser = async (id, userUpdates) => {
     return response;
 }
 
-export { updateUser };
+const updatePassword = async (id, atual, nova) => {
+    const response = await makeRequest('PUT', `/users/updateSenha`, { id, atual, nova });
+    return response;
+}
+export { updateUser, updatePassword };

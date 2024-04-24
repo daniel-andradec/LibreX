@@ -19,7 +19,6 @@ class SaleService{
     }
 
     async findAll(id){
-        //find all sales and purchases from a user, creating a new field to identify if it is a sale or a purchase
         const sales = await Sale.findAll({
             where: {
                 idVendedor: id
@@ -32,10 +31,10 @@ class SaleService{
         });
 
         sales.forEach(sale => {
-            sale.dataValues.sale = 1; //`type` 1 means sale
+            sale.dataValues.sale = 1;
         });
         purchases.forEach(purchase => {
-            purchase.dataValues.sale = 0; //`type` 2 means purchase
+            purchase.dataValues.sale = 0;
         });
 
         const allSales = sales.concat(purchases);

@@ -162,7 +162,7 @@ export default {
         await register(name, email, cellphone, password).then(async (res) => {
             if (res.status === 201) {
                 this.$toast.open({
-                    message: 'Usuário cadastrado com sucesso!.',
+                    message: 'Usuário cadastrado com sucesso!',
                     type: 'success',
                     duration: 3000,
                     position: 'top-right'

@@ -120,7 +120,7 @@ export default {
       const vendorId = this.book.idVendedor;
 
       await performSale(bookId, buyerId, vendorId).then((res) => {
-        if (res.status === 201) {
+        if (res.status === 200) {
           this.$toast.open({
               message: 'Compra realizada com sucesso!',
               type: 'success',
@@ -326,6 +326,13 @@ export default {
                     flex-direction: row;
                     align-items: strech;
                     gap: 20px;
+
+                    img {
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
 
                     .dono{ 
                     width: 50px;
