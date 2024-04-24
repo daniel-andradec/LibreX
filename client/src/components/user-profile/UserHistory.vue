@@ -6,7 +6,7 @@
         </div>
     </div>
 
-    <div class="history-item" v-for="item in transactions" :key="item.id">
+    <div class="history-item" v-for="item in transactions" :key="item.id" v-if="transactions.length > 0">
         <div class="image">
           <img :src="item.image" alt="book" />
         </div>
@@ -26,6 +26,10 @@
     
         <p>{{ item.data }}</p>
     </div>     
+
+    <div v-else class="not-found">
+        <h3> Você ainda não realizou nenhuma transação </h3>
+    </div>
     
     <div class="book-list">
     </div>
@@ -203,6 +207,18 @@ export default {
     color: black !important; /* Assegura que a cor será aplicada */
     font-size: 20px !important; /* Assegura que o tamanho será aplicado */
 }
+    }
+  }
+
+  .not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+
+    h3 {
+      font-size: 22px;
+      font-weight: 500;
     }
   }
 }

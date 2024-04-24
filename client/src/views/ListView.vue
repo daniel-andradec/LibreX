@@ -28,15 +28,14 @@
       </div>
     </div>
 
-    <div class="search">
+    <div class="search" v-if="books.length > 0">
         <input type="text" placeholder="Buscar Livro" v-model="searchText" @input="searchProduct()"/>
         <i class="fa fa-search icon" @click="searchProduct()"></i>
     </div>
     </div>
 
     <div class="not-found" v-else>
-      <h2>Nenhum livro encontrado :(</h2>
-      <span @click="this.$router.push('/')">Voltar à página inicial</span>
+      <h2>Nenhum livro disponível :(</h2>
     </div>
 </div>  
 </template>
@@ -100,14 +99,17 @@ export default {
 
     await getAllBooks().then((response) => {
         
-        const books = response.data
+        let books = response.data
 
         books.forEach(book => {
           const photoLink = book.foto.replace(/\\/g, '/').replace('uploads', 'uploads/')
           book.image = 'http://localhost:3000/' + photoLink
         })
 
-        this.books = response.data 
+        // filtra livros que nao sao do usuario logado
+        books = books.filter(book => book.idVendedor !== this.loggedInUser.id);
+
+        this.books = books
     }).catch((error) => {
       console.log(error)
     })
@@ -249,5 +251,9 @@ export default {
 i{
     color: var(--primaryColor);
     font-size: 33px;
+}
+
+.not-found {
+  margin-top: 120px;
 }
 </style>

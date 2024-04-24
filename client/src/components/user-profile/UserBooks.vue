@@ -20,10 +20,10 @@
             <img :src="book.image" />
             <div class="name">{{ fixLength(book.titulo) }}</div>
            
-            <div v-if="book.preco === 0" class="price">
+            <div v-if="book.preco == 0" class="price">
                 <i class="fa-solid fa-hand-holding-heart"></i>
                 </div>
-                <div v-else class="price"> {{ formatValue(book.preco) }}</div>
+            <div v-else class="price"> {{ formatValue(book.preco) }}</div>
         </div>
     </div>
 

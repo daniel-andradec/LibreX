@@ -100,8 +100,8 @@ export default {
     handleFileUpload(event) {
         const file = event.target.files[0];
 
-        // verificar se imagem é jpg ou png
-        if (file?.type !== 'image/jpeg' && file?.type !== 'image/png') {
+        // verificar se imagem é jpg ou png, svg ou webp
+        if (file?.type !== 'image/jpeg' && file?.type !== 'image/png' && file?.type !== 'image/svg+xml' && file?.type !== 'image/webp') {
             this.$toast.open({
                 message: 'Formato de imagem inválido. A imagem deve ser JPG ou PNG.',
                 type: 'warning',
@@ -156,7 +156,7 @@ export default {
 
         await addUserBook(formData).then((res) => {
           console.log('response', res)
-          if (res.status === 201) {
+          if (res.status === 200) {
               this.$toast.open({
                   message: 'Livro cadastrado com sucesso',
                   type: 'success',
@@ -208,6 +208,18 @@ export default {
           this.$refs.price.removeAttribute('disabled')
           this.$refs.price.style.backgroundColor = '#fff'
         }
+    },
+    modalOpen: {
+        handler: function () {
+            if (!this.editProduct) {
+                this.$nextTick(() => { 
+                    this.fileChanged = false
+                    this.imagePreviewUrl = null
+                    this.isDonation = false
+                });
+            }
+        },
+        deep: true
     }
   }
 }

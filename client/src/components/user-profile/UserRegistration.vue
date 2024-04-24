@@ -1,27 +1,44 @@
 <template>
   <div class="user-reg">
-    <div v-for="(fields, section) in sections" :key="section" class="section">
-          <h2>{{ section }}</h2>
+    <div class="section">
+          <h2>Dados Pessoais</h2>
           <div class="section-container">
-              <div 
-                  v-for="field in fields" 
-                  :key="field.label" 
-                  class="section-field"
-              >
-                  <div class="field-label">
-                      <label :for="field.ref" :class="{ required: field.required }">
-                          {{ field.label }}
-                      </label>
-                      <p v-if="field.changeButton" class="change-password" @click="passwordModalOpen = true">Alterar</p>
-                  </div>
-                  <input 
-                      :id="field.ref" 
-                      :type="field.type" 
-                      :placeholder="field.ref === 'name' ? loggedInUser.name : field.ref === 'email' ? loggedInUser.email : field.ref == 'cellphone' ? loggedInUser.cellphone : field.placeholder"
-                      :disabled="field.disable"
-                        v-model="formData[field.ref]"
-                      @input="field.input && this[field.input]($event); formatValue($event, field.format)" />
+              <div class="section-field">
+                <div class="field-label">
+                    <label for="name" class="required">Nome Completo</label>
+                </div>
+                <input id="name" type="text" :placeholder="loggedInUser.name" ref="name"  />
               </div>
+
+              <div class="section-field">
+                <div class="field-label">
+                    <label for="cellphone" class="required">Celular</label>
+                </div>
+
+                <input id="cellphone" type="tel" :placeholder="loggedInUser.cellphone" ref="cellphone" />
+              </div>
+          </div>
+      </div>
+
+      <div class="section">
+          <h2>Dados de Acesso</h2>
+          <div class="section-container">
+              
+              <div class="section-field">
+                <div class="field-label">
+                    <label for="email" class="required">E-mail</label>
+                </div>
+                <input id="email" type="email" :placeholder="loggedInUser.email" ref="email" />
+              </div>
+
+              <div class="section-field">
+                <div class="field-label">
+                    <label for="password" class="required">Senha</label>
+                    <p class="change-password" @click="passwordModalOpen = true">Alterar</p>
+                </div>  
+                <input id="password" type="password" placeholder="Para alterar a senha, clique em Alterar" ref="password" disabled />
+              </div>
+
           </div>
       </div>
 
@@ -55,7 +72,7 @@
 <script>
 import ModalComponent from '@/components/modals/ModalComponent.vue';
 import { mapActions, mapGetters } from 'vuex'
-import { updateUser } from '@/controllers/UpdateUserController';
+import { updateUser, updatePassword } from '@/controllers/UpdateUserController';
 
 export default {
   name: 'UserRegistration',
@@ -118,20 +135,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setUser']),
     async updatePassword() {
         if (!this.passwordData.password || !this.passwordData.newPassword || !this.passwordData.confirmPassword) {
             this.$toast.open({
                 message: 'Preencha todos os campos obrigatórios',
-                type: 'warning',
-                duration: 5000,
-                position: 'top-right'
-            });
-            return;
-        }
-
-        if (this.passwordData.newPassword.length < 6) {
-            this.$toast.open({
-                message: 'A senha deve ter no mínimo 6 caracteres',
                 type: 'warning',
                 duration: 5000,
                 position: 'top-right'
@@ -149,41 +157,74 @@ export default {
             return;
         }
 
-        // await updatePassword(this.passwordData.password, this.passwordData.newPassword).then(() => {
-        //     this.$toast.open({
-        //         message: 'Senha alterada com sucesso',
-        //         type: 'success',
-        //         duration: 5000,
-        //         position: 'top-right'
-        //     });
-        //     this.passwordModalOpen = false;
-        // }).catch(err => {
-        //     console.log(err);
-        //     this.$toast.open({
-        //         message: 'Senha incorreta.',
-        //         type: 'error',
-        //         duration: 5000,
-        //         position: 'top-right'
-        //     });
-        // });
+        const userId = this.loggedInUser.id;
+
+        await updatePassword(userId, this.passwordData.password, this.passwordData.newPassword).then(() => {
+            this.$toast.open({
+                message: 'Senha alterada com sucesso',
+                type: 'success',
+                duration: 5000,
+                position: 'top-right'
+            });
+            this.passwordModalOpen = false;
+        }).catch(err => {
+            console.log(err);
+            this.$toast.open({
+                message: 'Senha incorreta.',
+                type: 'error',
+                duration: 5000,
+                position: 'top-right'
+            });
+        });
     },
     submitForm() {
-          console.log('Enviando dados de atualização:', this.formData);
-      // Converter formData em formato de query string se necessário
-        const payload = new URLSearchParams(this.formData).toString();
-            console.log('Payload no formato de query string:', payload);
-        updateUser(this.loggedInUser.id, this.formData)
+      const name = this.$refs.name.value;
+      const cellphone = this.$refs.cellphone.value;
+      const email = this.$refs.email.value;
+
+      // monta payload com os campos que foram alterados
+      const payload = {
+        nome: name,
+        celular: cellphone,
+        email: email
+      }
+
+      // tira os vazios para nao enviar dados desnecessários
+      for (const key in payload) {
+        if (!payload[key]) {
+          delete payload[key];
+        }
+      }
+
+      console.log('Payload:', payload);
+
+
+    updateUser(this.loggedInUser.id, payload)
         .then(response => {
-        if (response.data && response.data.success) {
+          console.log('Resposta:', response);
+        if (response.data && response.status === 200) {
             this.$toast.open({
             message: 'Dados atualizados com sucesso!',
             type: 'success',
             duration: 5000,
             position: 'top-right'
             });
-        // Atualiza originalData para refletir as últimas alterações
-        this.originalData = { ...this.formData };
+            
+            const user = {
+                id: response.data.id,
+                email: response.data.email,
+                name: response.data.nome,
+                photo: response.data.foto,
+                cellphone: response.data.celular,
+            }
 
+            this.setUser(user);
+            localStorage.setItem('user', JSON.stringify(user))
+
+            //clear fields
+            this.$refs.name.value = '';
+            this.$refs.cellphone.value = '';
+            this.$refs.email.value = '';
       } else {
         // Se a resposta do servidor não for a esperada
         this.$toast.open({
@@ -219,9 +260,18 @@ export default {
         email: this.loggedInUser.email
     };
     this.originalData = { ...this.formData };
-        
-
   },
+  watch: {
+    passwordModalOpen(val) {
+        if (!val) {
+            this.passwordData = {
+                password: '',
+                newPassword: '',
+                confirmPassword: ''
+            }
+        }
+    }
+  }
   
 }
 

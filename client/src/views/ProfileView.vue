@@ -138,7 +138,7 @@ export default {
 
         await updatePhoto(userId, formData).then((res) => {
             console.log(res)
-            const userPhoto = res.data?.user?.foto
+            const userPhoto = res.data?.foto
 
             if (userPhoto) {
               const photoLink = userPhoto.replace(/\\/g, '/').replace('uploads', 'uploads/')
