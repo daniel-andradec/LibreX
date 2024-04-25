@@ -139,3 +139,8 @@ Desenvolver uma plataforma online voltada para a comunidade universitária, faci
      - Desenvolver endpoint de API para retornar vendas e compras de um usuário. [Daniel]
      - Criar seção de histórico de compras e vendas do usuário na página de perfil. [Iago]
      - Integrar a interface de histórico de compras e vendas do usuário com o backend. [Carolina]
+
+## Diagramas UML
+ - [Diagrama de Classes](diagrams/classDiagram.png)
+
+ - Diagrama de Atividades: [Cadastro de livros](diagrams/activityDiagram.png)
